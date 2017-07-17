@@ -23,13 +23,6 @@
         </repository>
     </repositories>
 
-    <distributionManagement>
-        <repository>
-            <id>matsim-eth-bintray</id>
-            <url>https://api.bintray.com/maven/matsim-eth/matsim/basel/</url>
-        </repository>
-    </distributionManagement>
-
     <dependencies>
         <dependency>
             <groupId>org.matsim</groupId>
