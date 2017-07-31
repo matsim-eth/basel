@@ -44,8 +44,8 @@ public class BaselPopGenerator {
 	private static Population population;
 	private static PopulationFactory populationFactory;
 	
-	
-	final static String SYNTH_POP = new File("TestResources/input/PlansFile_sample.csv").getAbsolutePath();
+	// paths don't need to be changed, just add the TestResources folder inside the project folder
+	final static String SYNTH_POP = new File("TestResources/input/PlansFile2_corrected_sample.csv").getAbsolutePath();
 	final static String NETWORK = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
 	final static String FACILITIES = new File("TestResources/input/FactualFacilities.xml.gz").getAbsolutePath();
 	final static String OUTPUT_PLANS = new File("TestResources/output/plans.xml").getAbsolutePath();
@@ -65,12 +65,14 @@ public class BaselPopGenerator {
 	protected final static Logger log = Logger.getLogger(BaselPopGenerator.class);
 	
 	public static void main(String[] args) {
+		// Generates population based on input table
 		BaselPopGenerator popGen = new BaselPopGenerator();
 		popGen.populationCreation();
 		new PopulationWriter(getScenario().getPopulation(), getScenario().getNetwork()).write(OUTPUT_PLANS);
 		new ObjectAttributesXmlWriter(getScenario().getPopulation().getPersonAttributes()).writeFile(OUTPUT_ATTRIBUTES);
 		new FacilitiesWriter(getScenario().getActivityFacilities()).write(OUTPUT_FACILITIES);
 		
+		// Prepares config for running simulation
 		Config config = ConfigUtils.createConfig();
 		
 		for (String type : new String[] {"h", "l", "e", "s", "w"}) {
@@ -78,12 +80,13 @@ public class BaselPopGenerator {
 			config.planCalcScore().addActivityParams(params);
 		}
 		
+		// Change here to add/remove score strategies
 		StrategySettings settings = new StrategySettings();
 		settings.setStrategyName("ChangeExpBeta");
 		settings.setWeight(1.0);
 		config.strategy().addStrategySettings(settings);
 		
-		//ConfigUtils.loadConfig(config, CONFIG);
+		// other config settings
 		config.plans().setInputFile(OUTPUT_PLANS);
 		config.plans().setInputPersonAttributeFile(OUTPUT_ATTRIBUTES);
 		config.network().setInputFile(NETWORK);
@@ -92,6 +95,14 @@ public class BaselPopGenerator {
 		config.global().setCoordinateSystem("EPSG:2056");
 		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
 		
+		// iteration settings
+		config.controler().setFirstIteration(0);
+		config.controler().setLastIteration(10);
+		config.controler().setWriteEventsInterval(10);
+		config.controler().setWritePlansInterval(5);
+		config.controler().setWriteSnapshotsInterval(1);
+		
+		// run
 		Controler controler = new Controler(config);
 		controler.run();
 		
@@ -141,9 +152,9 @@ public class BaselPopGenerator {
 			BufferedReader bufferedReader = new BufferedReader(new FileReader(SYNTH_POP));
 			String line = bufferedReader.readLine(); // skip header
 			
-			int index_HHCoordX = 21;
-			int index_HHCoordY = 22;
-			int index_PrimActFacilityID = 23;
+			int index_HHCoordX = 20;
+			int index_HHCoordY = 21;
+			int index_PrimActFacilityID = 22;
 			int index_TripChain = 9;
 			int index_start_time = 10;
 			int index_duration = 11;
