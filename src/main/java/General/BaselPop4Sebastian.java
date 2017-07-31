@@ -15,9 +15,9 @@ import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
 
 public class BaselPop4Sebastian extends BaselPopGenerator{
-	final static String BASEL_POP = new File("Basel/input/BaselFull.csv").getAbsolutePath();
-	final static String OUTPUT_PLANS = new File("Basel/output/plans4Sebastian.xml").getAbsolutePath();
-	final static String OUTPUT_ATTRIBUTES = new File("Basel/output/personAtrributes4Sebastian.xml").getAbsolutePath();
+	final static String BASEL_POP = new File("TestResources/input/BaselFull.csv").getAbsolutePath();
+	final static String OUTPUT_PLANS = new File("TestResources/output/plans4Sebastian.xml").getAbsolutePath();
+	final static String OUTPUT_ATTRIBUTES = new File("TestResources/output/personAtrributes4Sebastian.xml").getAbsolutePath();
 	
 	final static Coord nullCoord = new Coord(0, 0);
 	static int naTripDur = 0;

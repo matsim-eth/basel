@@ -45,14 +45,14 @@ public class BaselPopGenerator {
 	private static PopulationFactory populationFactory;
 	
 	
-	final static String SYNTH_POP = new File("Basel/input/PlansFile_sample.csv").getAbsolutePath();
-	final static String NETWORK = new File("Basel/input/FinalNetwork2.xml.gz").getAbsolutePath();
-	final static String FACILITIES = new File("Basel/input/FactualFacilities.xml.gz").getAbsolutePath();
-	final static String OUTPUT_PLANS = new File("Basel/output/plans.xml").getAbsolutePath();
-	final static String OUTPUT_FACILITIES = new File("Basel/output/facilities.xml").getAbsolutePath();
-	final static String OUTPUT_ATTRIBUTES = new File("Basel/output/personAtrributes.xml").getAbsolutePath();
-	final static String OUTPUT = new File("Basel/output/sim/").getAbsolutePath();
-	final static String CONFIG = new File("Basel/input/config.xml").getAbsolutePath();
+	final static String SYNTH_POP = new File("TestResources/input/PlansFile_sample.csv").getAbsolutePath();
+	final static String NETWORK = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
+	final static String FACILITIES = new File("TestResources/input/FactualFacilities.xml.gz").getAbsolutePath();
+	final static String OUTPUT_PLANS = new File("TestResources/output/plans.xml").getAbsolutePath();
+	final static String OUTPUT_FACILITIES = new File("TestResources/output/facilities.xml").getAbsolutePath();
+	final static String OUTPUT_ATTRIBUTES = new File("TestResources/output/personAtrributes.xml").getAbsolutePath();
+	final static String OUTPUT = new File("TestResources/output/sim/").getAbsolutePath();
+	final static String CONFIG = new File("TestResources/input/config.xml").getAbsolutePath();
 	final static CoordinateTransformation TRANSFORMATION = TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
 	
 	
