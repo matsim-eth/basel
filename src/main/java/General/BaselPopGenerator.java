@@ -1,14 +1,22 @@
 package General;
 
 import java.io.BufferedReader;
+import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
+import java.io.FileWriter;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
+import org.matsim.analysis.ModeStatsControlerListener;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -23,6 +31,7 @@ import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ActivityParams;
+import org.matsim.core.config.groups.PlansCalcRouteConfigGroup.ModeRoutingParams;
 import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
@@ -75,10 +84,23 @@ public class BaselPopGenerator {
 		// Prepares config for running simulation
 		Config config = ConfigUtils.createConfig();
 		
-		for (String type : new String[] {"h", "l", "e", "s", "w"}) {
+		String[] types = new String[] {"h1", "h4", "h6", "h9", "h12",
+									   "w1", "w4", "w6", "w9", "w12",
+									   "e1", "e4", "e8",
+									   "s05", "s1", "s2",
+									   "l1", "l2", "l4", "l8",
+									   "t05", "t1", "t4"};
+		for (String type : types) {
 			ActivityParams params = new ActivityParams(type);
+			double dur = Double.parseDouble(type.substring(1));
+			if (dur == 5.0) dur = 1800;
+			else dur *= 3600;
+			params.setTypicalDuration(dur);
 			config.planCalcScore().addActivityParams(params);
+			log.info(params.getTypicalDuration());
 		}
+//		System.exit(0);
+		
 		
 		// Change here to add/remove score strategies
 		StrategySettings settings = new StrategySettings();
@@ -93,7 +115,11 @@ public class BaselPopGenerator {
 		config.facilities().setInputFile(OUTPUT_FACILITIES);
 		config.controler().setOutputDirectory(OUTPUT);
 		config.global().setCoordinateSystem("EPSG:2056");
+		config.qsim().setFlowCapFactor(0.01);
+//		config.counts().setCountsScaleFactor(100d / prctScenario);
+//		config.ptCounts().setCountsScaleFactor(100d / prctScenario);
 		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
+//		config.plansCalcRoute().setNetworkModes(Arrays.asList("car", "pt"));
 		
 		// iteration settings
 		config.controler().setFirstIteration(0);
@@ -101,9 +127,11 @@ public class BaselPopGenerator {
 		config.controler().setWriteEventsInterval(10);
 		config.controler().setWritePlansInterval(5);
 		config.controler().setWriteSnapshotsInterval(1);
+		config.qsim().setEndTime(3600*24);
 		
 		// run
 		Controler controler = new Controler(config);
+		
 		controler.run();
 		
 	}
@@ -201,11 +229,12 @@ public class BaselPopGenerator {
 				}
 				
 				if((parts[index_TripChain].contains("W") || parts[index_TripChain].contains("E")) && primActFacilityID == null) {
-					//log.warn("Missing primary activity facilityID to worker or student.");
+					log.warn("Missing primary activity facilityID to worker or student. Person ID: " + person.getId().toString());
 					getPopulation().removePerson(person.getId());
 					noPrimFacID++;
-				} else if(getScenario().getActivityFacilities().getFacilities().get(primActFacilityID) == null) {
-					//log.warn("Facility not found issue.");
+				} else if((parts[index_TripChain].contains("W") || parts[index_TripChain].contains("E")) && 
+						getScenario().getActivityFacilities().getFacilities().get(primActFacilityID) == null) {
+					log.warn("Facility not found issue. Facility ID: " + (primActFacilityID != null ? primActFacilityID.toString() : "NULL"));
 					getPopulation().removePerson(person.getId());
 					facIDNotFound++;
 				} else {
@@ -227,6 +256,11 @@ public class BaselPopGenerator {
 			}
 			
 			bufferedReader.close();
+			
+			for(Person p : scenario.getPopulation().getPersons().values()){
+				System.out.println(p.getId().toString());
+			}
+			
 		} // end try
 		catch (IOException e) {
 			e.printStackTrace();
