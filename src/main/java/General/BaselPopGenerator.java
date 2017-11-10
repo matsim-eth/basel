@@ -1,22 +1,13 @@
 package General;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collection;
 import java.util.Map;
 import java.util.Random;
-import java.util.Set;
-
 import org.apache.log4j.Logger;
-import org.matsim.analysis.ModeStatsControlerListener;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.api.core.v01.Scenario;
@@ -31,7 +22,6 @@ import org.matsim.api.core.v01.population.PopulationWriter;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.groups.PlanCalcScoreConfigGroup.ActivityParams;
-import org.matsim.core.config.groups.PlansCalcRouteConfigGroup.ModeRoutingParams;
 import org.matsim.core.config.groups.StrategyConfigGroup.StrategySettings;
 import org.matsim.core.controler.Controler;
 import org.matsim.core.controler.OutputDirectoryHierarchy.OverwriteFileSetting;
