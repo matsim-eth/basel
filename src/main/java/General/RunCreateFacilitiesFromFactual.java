@@ -46,10 +46,11 @@ public class RunCreateFacilitiesFromFactual {
 		RunCreateFacilitiesFromFactual facilitiesCreator = new RunCreateFacilitiesFromFactual();
 		facilitiesCreator.init();
 		facilitiesCreator.run();
-		facilitiesCreator.write(outputFacilities);
+		new FacilitiesWriter(scenario.getActivityFacilities()).write(outputFacilities);
 		Config config = ConfigUtils.createConfig();
 		Scenario newScenario = ScenarioUtils.createScenario(config);
 		new FacilitiesReaderMatsimV1(newScenario).readFile(outputFacilities);
+//		new FacilitiesWriter(scenario.getActivityFacilities()).write("output_facilities.xml.gz");
 		log.info("Creation finished #################################");
 	}
 	
@@ -68,7 +69,7 @@ public class RunCreateFacilitiesFromFactual {
 		 * Read the factual.com facilities extracted data
 		 */
 		this.readFactualData();
-		this.addLinkIds();
+//		this.addLinkIds();
 	
 	}
 
@@ -153,7 +154,7 @@ public class RunCreateFacilitiesFromFactual {
 					desc += parts[index_categories].replace("[", "").replace("]", "").replace("u'", "").replace("u\"", "").replace("'", "").replace("\"", "") + " (" + parts[index_factualId] + ").";
 					facility.setDesc(desc);
 					
-					System.out.println(facility.getId().toString());
+//					System.out.println(facility.getId().toString());
 					
 					activityTypes.clear();
 					capacities.clear();
@@ -185,24 +186,25 @@ public class RunCreateFacilitiesFromFactual {
 		return oTimes;
 	}
 	
-	private void addLinkIds() {
-		new FacilitiesReaderMatsimV1(scenario).readFile(outputFacilities);
-		ActivityFacilities facilities = scenario.getActivityFacilities();
-		
-		
-		
-		Map<Id<ActivityFacility>, ? extends ActivityFacility> facilitiesMap = new HashMap<Id<ActivityFacility>, ActivityFacility>();  
-		facilitiesMap = facilities.getFacilities();
-		
+//	private void addLinkIds() {
+//		new FacilitiesReaderMatsimV1(scenario).readFile(outputFacilities);
+//		ActivityFacilities facilities = scenario.getActivityFacilities();
+//		
+//		
+//		
+//		Map<Id<ActivityFacility>, ? extends ActivityFacility> facilitiesMap = new HashMap<Id<ActivityFacility>, ActivityFacility>();  
+//		facilitiesMap = facilities.getFacilities();
+//		
 //		for (Id<ActivityFacility> key : facilitiesMap.keySet()){
 //			Facility fac = facilitiesMap.get(key);
 //			
+//			
 //
 //        }
-	}
-		
-	public void write(String facilitiesOutputPath) {
-		new FacilitiesWriter(RunCreateFacilitiesFromFactual.scenario.getActivityFacilities()).write(facilitiesOutputPath);
-	}
+//	}
+//		
+//	public void write(String facilitiesOutputPath) {
+//		new FacilitiesWriter(RunCreateFacilitiesFromFactual.scenario.getActivityFacilities()).write(facilitiesOutputPath);
+//	}
 
 }

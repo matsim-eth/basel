@@ -37,7 +37,7 @@ import org.matsim.facilities.FacilitiesReaderMatsimV1;
 import org.matsim.facilities.FacilitiesWriter;
 import org.matsim.utils.objectattributes.ObjectAttributesXmlWriter;
 
-public class BaselPopGenerator {
+public class BaselPopConvert {
 	private static Scenario scenario;
 	private static Network network;
 	private static Population population;
@@ -46,10 +46,10 @@ public class BaselPopGenerator {
 	// paths don't need to be changed, just add the TestResources folder inside the project folder
 	final static String SYNTH_POP = new File("TestResources/input/PlansFile2_corrected_sample.csv").getAbsolutePath();
 	final static String NETWORK = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
-	final static String FACILITIES = new File("TestResources/input/FactualFacilities.xml.gz").getAbsolutePath();
-	final static String OUTPUT_PLANS = new File("TestResources/output/plans.xml").getAbsolutePath();
-	final static String OUTPUT_FACILITIES = new File("TestResources/output/facilities.xml").getAbsolutePath();
-	final static String OUTPUT_ATTRIBUTES = new File("TestResources/output/personAtrributes.xml").getAbsolutePath();
+	final static String FACILITIES = new File("TestResources/input/facilities.xml.gz").getAbsolutePath();
+	final static String OUTPUT_PLANS = new File("TestResources/output/population.xml.gz").getAbsolutePath();
+	final static String OUTPUT_FACILITIES = new File("TestResources/output/facilities.xml.gz").getAbsolutePath();
+	final static String OUTPUT_ATTRIBUTES = new File("TestResources/output/population_attributes.xml.gz").getAbsolutePath();
 	final static String OUTPUT = new File("TestResources/output/sim/").getAbsolutePath();
 	final static String CONFIG = new File("TestResources/input/config.xml").getAbsolutePath();
 	final static CoordinateTransformation TRANSFORMATION = TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
@@ -61,11 +61,11 @@ public class BaselPopGenerator {
 	private QuadTree<ActivityFacility> leisureFacilitiesTree;
 	private QuadTree<ActivityFacility> educationFacilitiesTree;
 	
-	protected final static Logger log = Logger.getLogger(BaselPopGenerator.class);
+	protected final static Logger log = Logger.getLogger(BaselPopConvert.class);
 	
 	public static void main(String[] args) {
 		// Generates population based on input table
-		BaselPopGenerator popGen = new BaselPopGenerator();
+		BaselPopConvert popGen = new BaselPopConvert();
 		popGen.populationCreation();
 		new PopulationWriter(getScenario().getPopulation(), getScenario().getNetwork()).write(OUTPUT_PLANS);
 		new ObjectAttributesXmlWriter(getScenario().getPopulation().getPersonAttributes()).writeFile(OUTPUT_ATTRIBUTES);
@@ -122,11 +122,11 @@ public class BaselPopGenerator {
 		// run
 		Controler controler = new Controler(config);
 		
-		controler.run();
+//		controler.run();
 		
 	}
 	
-	public BaselPopGenerator() {
+	public BaselPopConvert() {
 		this.init();
 	}
 	
@@ -276,8 +276,11 @@ public class BaselPopGenerator {
 				Coord coord = getScenario().getActivityFacilities().getFacilities().get(homeFacilityID).getCoord();
 				Activity home = getPopulationFactory().createActivityFromCoord("h", coord);
 				home.setFacilityId(homeFacilityID);
-				home.setStartTime(Integer.parseInt(sTimes[i]));
-				if(i < tChain.length -1) home.setMaximumDuration(Integer.parseInt(dur[i])); // doesnt adds duration to last home activity
+				if(i > 0) home.setStartTime(Integer.parseInt(sTimes[i])); // doesn't add start time to the first home activity
+				if(i < tChain.length -1){
+					home.setEndTime(Integer.parseInt(sTimes[i])+Integer.parseInt(dur[i])); //home.setMaximumDuration(Integer.parseInt(dur[i])); // doesnt adds duration to last home activity
+					if(home.getEndTime() - home.getStartTime() <= 0) home.setEndTime(home.getStartTime() + 60);
+				} 
 				plan.addActivity(home);
 				previousActivity = home;
 			}
@@ -286,7 +289,9 @@ public class BaselPopGenerator {
 				Activity work = getPopulationFactory().createActivityFromCoord("w", coord);
 				work.setFacilityId(primActFacilityID);
 				work.setStartTime(Integer.parseInt(sTimes[i]));
-				work.setMaximumDuration(Integer.parseInt(dur[i]));
+				work.setEndTime(Integer.parseInt(sTimes[i])+Integer.parseInt(dur[i]));
+//				work.setMaximumDuration(Integer.parseInt(dur[i]));
+				if(work.getEndTime() - work.getStartTime() <= 0) work.setEndTime(work.getStartTime() + 60);
 				plan.addActivity(work);
 				employed = true;
 				previousActivity = work;
@@ -296,7 +301,9 @@ public class BaselPopGenerator {
 				if (employed) education.setFacilityId(getRandomFacility(education, previousActivity.getCoord()).getId());
 				else education.setFacilityId(primActFacilityID);
 				education.setStartTime(Integer.parseInt(sTimes[i]));
-				education.setMaximumDuration(Integer.parseInt(dur[i]));
+				education.setEndTime(Integer.parseInt(sTimes[i])+Integer.parseInt(dur[i]));
+//				education.setMaximumDuration(Integer.parseInt(dur[i]));
+				if(education.getEndTime() - education.getStartTime() <= 0) education.setEndTime(education.getStartTime() + 60);
 				plan.addActivity(education);
 				previousActivity = education;
 			}
@@ -305,7 +312,9 @@ public class BaselPopGenerator {
 				leisure.setFacilityId(getRandomFacility(leisure, previousActivity.getCoord()).getId());
 				leisure.setCoord(getScenario().getActivityFacilities().getFacilities().get(leisure.getFacilityId()).getCoord());
 				leisure.setStartTime(Integer.parseInt(sTimes[i]));
-				leisure.setMaximumDuration(Integer.parseInt(dur[i]));
+				leisure.setEndTime(Integer.parseInt(sTimes[i])+Integer.parseInt(dur[i]));
+//				leisure.setMaximumDuration(Integer.parseInt(dur[i]));
+				if(leisure.getEndTime() - leisure.getStartTime() <= 0) leisure.setEndTime(leisure.getStartTime() + 60);
 				plan.addActivity(leisure);
 				previousActivity = leisure;
 			}
@@ -314,7 +323,9 @@ public class BaselPopGenerator {
 				shop.setFacilityId(getRandomFacility(shop, previousActivity.getCoord()).getId());
 				shop.setCoord(getScenario().getActivityFacilities().getFacilities().get(shop.getFacilityId()).getCoord());
 				shop.setStartTime(Integer.parseInt(sTimes[i]));
-				shop.setMaximumDuration(Integer.parseInt(dur[i]));
+				shop.setEndTime(Integer.parseInt(sTimes[i])+Integer.parseInt(dur[i]));
+//				shop.setMaximumDuration(Integer.parseInt(dur[i]));
+				if(shop.getEndTime() - shop.getStartTime() <= 0) shop.setEndTime(shop.getStartTime() + 60);
 				plan.addActivity(shop);
 				previousActivity = shop;
 			}
@@ -398,7 +409,7 @@ public class BaselPopGenerator {
 	}
 
 	public static void setPopulationFactory(PopulationFactory populationFactory) {
-		BaselPopGenerator.populationFactory = populationFactory;
+		BaselPopConvert.populationFactory = populationFactory;
 	}
 
 	public static Population getPopulation() {
@@ -406,7 +417,7 @@ public class BaselPopGenerator {
 	}
 
 	public static void setPopulation(Population population) {
-		BaselPopGenerator.population = population;
+		BaselPopConvert.population = population;
 	}
 
 	public static Scenario getScenario() {
@@ -414,7 +425,7 @@ public class BaselPopGenerator {
 	}
 
 	public static void setScenario(Scenario scenario) {
-		BaselPopGenerator.scenario = scenario;
+		BaselPopConvert.scenario = scenario;
 	}
 	
 
