@@ -1,4 +1,4 @@
-package General;
+package ch.ethz.matsim.basel.scenario;
 
 import java.io.BufferedReader;
 import java.io.File;

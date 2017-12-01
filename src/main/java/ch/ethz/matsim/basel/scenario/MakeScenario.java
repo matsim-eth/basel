@@ -1,4 +1,4 @@
-package General;
+package ch.ethz.matsim.basel.scenario;
 
 import java.io.File;
 import java.util.Collection;

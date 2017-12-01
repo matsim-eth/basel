@@ -1,13 +1,13 @@
-package erath;
+package ch.ethz.matsim.basel.osm;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 
 import org.apache.commons.io.FilenameUtils;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.pt2matsim.config.OsmConverterConfigGroup;
-import org.matsim.pt2matsim.osm.OsmMultimodalNetworkConverter;
 import org.matsim.pt2matsim.osm.lib.OsmData;
 import org.matsim.pt2matsim.osm.lib.OsmDataImpl;
 import org.matsim.pt2matsim.osm.lib.OsmFileReader;
@@ -47,8 +47,8 @@ public final class OSM2MATSim {
 	 * @param configFile the config.xml file
 	 */
 	public static void run(String configFile) {
-		Config configAll = ConfigUtils.loadConfig(configFile, new OsmConverterConfigGroup());
-		OsmConverterConfigGroup config = ConfigUtils.addOrGetModule(configAll, OsmConverterConfigGroup.GROUP_NAME, OsmConverterConfigGroup.class );
+		Config configAll = ConfigUtils.loadConfig(configFile, new OsmExtendedConverterConfigGroup());
+		OsmExtendedConverterConfigGroup config = ConfigUtils.addOrGetModule(configAll, OsmExtendedConverterConfigGroup.GROUP_NAME, OsmExtendedConverterConfigGroup.class );
 
 		run(config);
 	}
@@ -60,7 +60,7 @@ public final class OSM2MATSim {
 	 * @param outputCoordinateSystem output coordinate system (no transformation is applied if <tt>null</tt>)
 	 */
 	public static void run(String osmFile, String outputNetworkFile, String outputCoordinateSystem) {
-		OsmConverterConfigGroup config = OsmConverterConfigGroup.createDefaultConfig();
+		OsmExtendedConverterConfigGroup config = OsmExtendedConverterConfigGroup.createDefaultConfig();
 		config.setOsmFile(osmFile);
 		config.setOutputNetworkFile(outputNetworkFile);
 		config.setOutputCoordinateSystem(outputCoordinateSystem);
@@ -68,25 +68,46 @@ public final class OSM2MATSim {
 		run(config);
 	}
 
-	public static void run(OsmConverterConfigGroup config) {
+	public static void run(OsmExtendedConverterConfigGroup config) {
 		OsmData osmData = new OsmDataImpl(config.getBasicWayFilter());
 		String osmFile = config.getOsmFile();
-		if (FilenameUtils.getExtension(osmFile).equals("pbf")){ // rough filetype check
+		String osmFileType = config.getOsmFileType();
+		String osmPolygonFilter = config.getOsmPolygonFilterFile();
+		String osmFilterRoads = config.getOsmFilterRoads();
+		
+		if (osmFileType.equals("pbf")){ // rough filetype check
 			File tempOsmFile = null;
 			try {
 				tempOsmFile = File.createTempFile("osmInput", ".osm");
 				tempOsmFile.deleteOnExit();
-			} catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
+			} catch (IOException e) {e.printStackTrace();}
 			// Read the PBF and write to XML.
 	        Osmosis.run(new String[] {"--read-pbf",osmFile,"--write-xml",tempOsmFile.getPath()});
 	        osmFile = tempOsmFile.getPath();
 		}
+		
+		if (osmPolygonFilter != null && !osmPolygonFilter.isEmpty()){
+			File tempOsmFile2 = null;
+			try {
+				tempOsmFile2 = File.createTempFile("osmInput", ".osm");
+				tempOsmFile2.deleteOnExit();
+			} catch (IOException e) {e.printStackTrace();}
+			Osmosis.run(new String[] {"--read-xml", osmFile, "--bounding-polygon", 
+					osmPolygonFilter, "--write-xml",  tempOsmFile2.getPath()});
+	        String osmFile2 = tempOsmFile2.getPath();
+			if (osmFilterRoads == null || osmFilterRoads.isEmpty()){
+				osmFile = osmFile2;
+			} else {
+				String[] filterRoads = Arrays.stream(osmFilterRoads.split(",")).map(String::trim).toArray(String[]::new);
+				OsmExtendedConverterConfigGroup config2 = config;
+//				TODO: set new highway filter for config 2 -> convert to MATSim and then merge.
+//				A better option would be to filter highway with Osmosis, then it's possible to save the exact OSM.
+			}
+		}
+			
 		new OsmFileReader(osmData).readFile(osmFile);
 
-		OsmMultimodalNetworkConverter converter = new OsmMultimodalNetworkConverter(osmData);
+		OsmNetworkConverter converter = new OsmNetworkConverter(osmData);
 		converter.convert(config);
 
 		NetworkTools.writeNetwork(converter.getNetwork(), config.getOutputNetworkFile());
