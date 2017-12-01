@@ -48,7 +48,7 @@ public class MakeScenario {
 	final static String OUTPUT = new File("TestResources/output").getAbsolutePath();
 	static public void main(String args[]) throws Exception {
 		double scenarioScale = 0.01;//Double.parseDouble(args[0]);
-		int numberOfThreads = 1;//Integer.parseInt(args[1]);
+		int numberOfThreads = 2;//Integer.parseInt(args[1]);
 		double downsampling = args.length > 2 ? Double.parseDouble(args[2]) : 1.0;
 
 		// TODO: Move down

@@ -44,7 +44,7 @@ public class BaselPopConvert {
 	private static PopulationFactory populationFactory;
 	
 	// paths don't need to be changed, just add the TestResources folder inside the project folder
-	final static String SYNTH_POP = new File("TestResources/input/PlansFile2_corrected_sample.csv").getAbsolutePath();
+	final static String SYNTH_POP = new File("TestResources/input/PlansFile2_corrected.csv").getAbsolutePath();
 	final static String NETWORK = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
 	final static String FACILITIES = new File("TestResources/input/facilities.xml.gz").getAbsolutePath();
 	final static String OUTPUT_PLANS = new File("TestResources/output/population.xml.gz").getAbsolutePath();
