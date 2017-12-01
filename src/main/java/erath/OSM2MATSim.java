@@ -74,14 +74,14 @@ public final class OSM2MATSim {
 		if (FilenameUtils.getExtension(osmFile).equals("pbf")){ // rough filetype check
 			File tempOsmFile = null;
 			try {
-				tempOsmFile = File.createTempFile("osmInput", ".xml");
+				tempOsmFile = File.createTempFile("osmInput", ".osm");
 				tempOsmFile.deleteOnExit();
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			// Read the PBF and write to XML.
-	        Osmosis.run(new String[] {"-q","--read-pbf-0.6",osmFile,"--write-xml-0.6",tempOsmFile.getPath()});
+	        Osmosis.run(new String[] {"--read-pbf",osmFile,"--write-xml",tempOsmFile.getPath()});
 	        osmFile = tempOsmFile.getPath();
 		}
 		new OsmFileReader(osmData).readFile(osmFile);
