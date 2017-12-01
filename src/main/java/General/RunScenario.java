@@ -19,7 +19,7 @@ public class RunScenario {
 		Config config = ConfigUtils.loadConfig(OUTPUT+"/output_config.xml");//args[0]);
 		
 		config.global().setNumberOfThreads(1);//Integer.parseInt(args[1]));
-		config.qsim().setNumberOfThreads(1);//Integer.parseInt(args[2]));
+		config.qsim().setNumberOfThreads(1);//Integer.parseInt(args[1]));
 		
 		Scenario scenario = ScenarioUtils.loadScenario(config);
 		Controler controler = new Controler(scenario);

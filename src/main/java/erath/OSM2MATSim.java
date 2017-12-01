@@ -1,5 +1,9 @@
 package erath;
 
+import java.io.File;
+import java.io.IOException;
+
+import org.apache.commons.io.FilenameUtils;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.pt2matsim.config.OsmConverterConfigGroup;
@@ -8,6 +12,7 @@ import org.matsim.pt2matsim.osm.lib.OsmData;
 import org.matsim.pt2matsim.osm.lib.OsmDataImpl;
 import org.matsim.pt2matsim.osm.lib.OsmFileReader;
 import org.matsim.pt2matsim.tools.NetworkTools;
+import org.openstreetmap.osmosis.core.Osmosis;
 
 /**
  * Run this class to create a multimodal MATSim network from OSM.
@@ -65,7 +70,21 @@ public final class OSM2MATSim {
 
 	public static void run(OsmConverterConfigGroup config) {
 		OsmData osmData = new OsmDataImpl(config.getBasicWayFilter());
-		new OsmFileReader(osmData).readFile(config.getOsmFile());
+		String osmFile = config.getOsmFile();
+		if (FilenameUtils.getExtension(osmFile).equals("pbf")){ // rough filetype check
+			File tempOsmFile = null;
+			try {
+				tempOsmFile = File.createTempFile("osmInput", ".xml");
+				tempOsmFile.deleteOnExit();
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			// Read the PBF and write to XML.
+	        Osmosis.run(new String[] {"-q","--read-pbf-0.6",osmFile,"--write-xml-0.6",tempOsmFile.getPath()});
+	        osmFile = tempOsmFile.getPath();
+		}
+		new OsmFileReader(osmData).readFile(osmFile);
 
 		OsmMultimodalNetworkConverter converter = new OsmMultimodalNetworkConverter(osmData);
 		converter.convert(config);
