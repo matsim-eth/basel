@@ -37,6 +37,13 @@
     <version>0.44.1</version>
 </dependency>
 
+<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+<dependency>
+    <groupId>org.openstreetmap.osmosis</groupId>
+    <artifactId>osmosis-areafilter</artifactId>
+    <version>0.44.1</version>
+</dependency>
+
 <!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
 <dependency>
     <groupId>org.openstreetmap.osmosis</groupId>

@@ -11,6 +11,7 @@ import org.matsim.pt2matsim.osm.lib.AllowedTagsFilter;
 import org.matsim.pt2matsim.osm.lib.Osm;
 
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -252,6 +253,15 @@ public class OsmExtendedConverterConfigGroup extends ReflectiveConfigGroup {
 			filter.add(Osm.ElementType.WAY, w.getOsmKey(), w.getOsmValue());
 		}
 		return filter;
+	}
+	
+	public void filterBasicWayFilter(Set<String> waysToRemove) {
+		Set<ConfigGroup> valuesToRemove = new HashSet<ConfigGroup>();
+		for(ConfigGroup e : this.getParameterSets(OsmExtendedConverterConfigGroup.OsmWayParams.SET_NAME)) {
+			OsmExtendedConverterConfigGroup.OsmWayParams w = (OsmExtendedConverterConfigGroup.OsmWayParams) e;
+			if (!waysToRemove.contains(w.getOsmValue())) valuesToRemove.add(e);
+		}
+		for(ConfigGroup e : valuesToRemove) this.removeParameterSet(e);
 	}
 
 	/**

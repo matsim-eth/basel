@@ -391,7 +391,10 @@ public class OsmNetworkConverter {
 		Id<org.matsim.api.core.v01.network.Node> toId = Id.create(toNode.getId(), org.matsim.api.core.v01.network.Node.class);
 		if(network.getNodes().get(fromId) != null && network.getNodes().get(toId) != null) {
 			if(!onewayReverse) {
-				Link l = network.getFactory().createLink(Id.create(way.getId().toString(), Link.class), network.getNodes().get(fromId), network.getNodes().get(toId));
+				Link l = network.getFactory().createLink(Id.create(
+						network.getNodes().get(fromId).getId().toString() + "_" + 
+						network.getNodes().get(toId).getId().toString(), Link.class), 
+						network.getNodes().get(fromId), network.getNodes().get(toId));
 				l.setLength(length);
 				l.setFreespeed(freespeed);
 				l.setCapacity(capacity);
@@ -403,7 +406,10 @@ public class OsmNetworkConverter {
 				this.id++;
 			}
 			if(!oneway) {
-				Link l = network.getFactory().createLink(Id.create(way.getId().toString(), Link.class), network.getNodes().get(toId), network.getNodes().get(fromId));
+				Link l = network.getFactory().createLink(Id.create(
+						network.getNodes().get(toId).getId().toString() + "_" + 
+						network.getNodes().get(fromId).getId().toString(), Link.class), 
+						network.getNodes().get(toId), network.getNodes().get(fromId));
 				l.setLength(length);
 				l.setFreespeed(freespeed);
 				l.setCapacity(capacity);
