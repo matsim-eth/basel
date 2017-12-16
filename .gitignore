@@ -5,9 +5,7 @@
 .DS_Store
 
 /src/.DS_Store
-<<<<<<< HEAD
-/src/main/.DS_Store
-=======
 
 /src/main/.DS_Store
->>>>>>> branch 'master' of https://github.com/matsim-eth/basel.git
+
+sbb-lima-ch-fr-de-cropped-nobuildings.osm.pbf

@@ -77,8 +77,9 @@ def createPolys(inOgr, options):
             polyName = options.outPrefix + incFmt % inc
             inc += 1
 
-        logging.info('Creating ' + polyName + '.poly')
-        f = open(polyName + '.poly', 'wt')
+        polyName = 'polygon' # changed name to default due to bug in Osmosis not parsing input name
+        logging.info('Creating ' + polyName + '.txt') # changed extension from .poly to .txt due to bug in Osmosis
+        f = open(polyName + '.txt', 'wt') # changed extension from .poly to .txt due to bug in Osmosis
         print >>f, polyName
 
         # this will be a polygon, TODO: handle linestrings (must be buffered)
