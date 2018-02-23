@@ -313,7 +313,7 @@ public class OsmNetworkConverter {
 			}
 		}
 		// - check tag "maxspeed"
-		String maxspeedTag = way.getTags().get(Osm.Key.MAXSPEED);
+		String maxspeedTag = way.getTags().get("maxspeed:motorcar");
 		if(maxspeedTag != null) {
 			try {
 				freespeed = Double.parseDouble(maxspeedTag) / 3.6; // convert km/h to m/s
@@ -322,7 +322,7 @@ public class OsmNetworkConverter {
 				if(config.getGuessFreeSpeed()) {
 					try {
 						message = false;
-						freespeed = Double.parseDouble(maxspeedTag.substring(0, 2)) / 3.6;
+						freespeed = Double.parseDouble(maxspeedTag.replaceAll("[^0-9.]", "")) / 3.6;
 					} catch (NumberFormatException e1) {
 						message = true;
 					}

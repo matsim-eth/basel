@@ -222,7 +222,7 @@ public class OsmExtendedConverterConfigGroup extends ReflectiveConfigGroup {
 				"\t\tcases generate extremely long links (e.g. for motorways with only a few ramps every few kilometers).\n" +
 				"\t\tDefaults to <code>false</code>.");
 		map.put(GUESS_FREE_SPEED,
-				"If true: The first two digits of the maxspeed tag are used if it cannot be parsed (e.g. \"50; 80\" or similar).");
+				"If true: The numeric characters from the maxspeed:motorcar tag are used if it cannot be directly parsed (e.g. removes trailling kph or similar).");
 		map.put(KEEP_TAGS_AS_ATTRIBUTES,
 				"If true: The osm tags for ways and containing relations are saved as link attributes in the network. Increases filesize. Default: true.");
 		map.put(SCALE_MAX_SPEED,

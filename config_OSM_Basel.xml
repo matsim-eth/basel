@@ -20,10 +20,10 @@
 		<!-- If true: The osm tags for ways and containing relations are saved as link attributes in the network. Increases filesize. Default: true. -->
 		<param name="keepTagsAsAttributes" value="true" />
 
-		<param name="maxLinkLength" value="500.0" />
+		<param name="maxLinkLength" value="50.0" />
 
 		<!-- The path to the osm file. -->
-		<param name="osmFile" value="sbb-lima-ch-fr-de-cropped-nobuildings.osm.pbf" />
+		<param name="osmFile" value="predicted_speeds_output_2030.osm.pbf" />
 
 		<!-- Format of the OSM file. Either pbf or xml. -->
 		<param name="osmFileType" value="pbf" />
@@ -35,7 +35,7 @@
 		<param name="osmPolygonFilterFile" value="polygon.txt" />
 
 		<param name="outputCoordinateSystem" value="EPSG:2056" />
-		<param name="outputNetworkFile" value="basel_network.xml.gz" />
+		<param name="outputNetworkFile" value="basel_LIMA_network.xml.gz" />
 
 		<!-- In case the speed limit allowed does not represent the speed a vehicle can actually realize, e.g. by constrains of
 		traffic lights not explicitly modeled, a kind of "average simulated speed" can be used.
