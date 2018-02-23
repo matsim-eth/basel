@@ -78,6 +78,11 @@
     		<scope>system</scope>
     		<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
         </dependency>
+        <dependency>
+        	<groupId>com.opencsv</groupId>
+        	<artifactId>opencsv</artifactId>
+        	<version>3.8</version>
+        </dependency>
     </dependencies>
     <properties>
   		<maven.compiler.target>1.8</maven.compiler.target>
