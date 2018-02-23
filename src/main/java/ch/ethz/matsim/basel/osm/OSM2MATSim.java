@@ -36,7 +36,8 @@ public final class OSM2MATSim {
 		if(args.length == 1) {
 			run(args[0]);
 		} else {
-			throw new IllegalArgumentException("Wrong number of arguments");
+			run("H:/Basel/New PT Mapping/OldFiles/baselConfigIVT.xml");
+//			throw new IllegalArgumentException("Wrong number of arguments");
 		}
 	}
 
