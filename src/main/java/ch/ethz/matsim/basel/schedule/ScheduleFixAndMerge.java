@@ -16,12 +16,12 @@ import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 import org.matsim.pt2matsim.tools.debug.ScheduleCleaner;
 import org.matsim.pt2matsim.tools.ScheduleTools;
 
-public class ScheduleFix {
-	static String path = "H:/Basel/New PT Mapping/";
-	static String inputSchedule = "OldFiles/CH_GVMB_Unmapped_Schedule.xml";
+public class ScheduleFixAndMerge {
+	static String path = "/Volumes/share-ivt-home-$/Basel/New PT Mapping/";
+	static String inputSchedule1 = "OldFiles/reconvertedSchedule.xml";
+	static String inputSchedule2 = "S-Bahn_DE/hafasSchedule.xml";
 	static String outputSchedule = "OldFiles/GVMB_Unmapped_Schedule.xml";
-//	static String inputSchedule2 = "S-Bahn_DE/hafasSchedule.xml";
-//	static String outputSchedule = "S-Bahn_DE/hafasSchedule_railGVMB.xml";
+	//	static String outputSchedule = "S-Bahn_DE/hafasSchedule_railGVMB.xml";
 	static String stopsGVMBcsv = "OldFiles/GVMB_Stops.csv";
 	static Set<Id<TransitStopFacility>> stopsGVMB = new HashSet<Id<TransitStopFacility>>();
 	static CSVReader reader = null;
@@ -39,15 +39,15 @@ public class ScheduleFix {
             e.printStackTrace();
         }
 		
-		TransitSchedule schedule = ScheduleTools.readTransitSchedule(path+inputSchedule);
-//		TransitSchedule schedule2 = ScheduleTools.readTransitSchedule(path+inputSchedule2);
-//		ScheduleTools.mergeSchedules(schedule, schedule2);
+		TransitSchedule schedule1 = ScheduleTools.readTransitSchedule(path+inputSchedule1);
+		TransitSchedule schedule2 = ScheduleTools.readTransitSchedule(path+inputSchedule2);
+		ScheduleTools.mergeSchedules(schedule1, schedule2);
 //		ScheduleCleaner.removeTransitRouteByMode(schedule, new HashSet<>(Arrays.asList("bus", "tram", "ferry")));
-		ScheduleCleaner.removeMapping(schedule);
-		ScheduleCleaner.cutSchedule(schedule, stopsGVMB);
+		ScheduleCleaner.removeMapping(schedule1);
+		ScheduleCleaner.cutSchedule(schedule1, stopsGVMB);
 //		ScheduleCleaner.cutSchedule(schedule, new Coord(2612771.061763661,1271489.005109281), 25000.0);
-		ScheduleCleaner.removeNotUsedStopFacilities(schedule);
-		ScheduleTools.writeTransitSchedule(schedule, path+outputSchedule);
+		ScheduleCleaner.removeNotUsedStopFacilities(schedule1);
+		ScheduleTools.writeTransitSchedule(schedule1, path+outputSchedule);
  
     }
 

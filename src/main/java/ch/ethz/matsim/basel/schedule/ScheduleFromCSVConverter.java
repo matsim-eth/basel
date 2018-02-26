@@ -172,6 +172,7 @@ public class ScheduleFromCSVConverter {
 		TransitLine transitLine = null;
 		String[] stopIds = null;
 		String transportMode = null;
+		String vehicleTypeId = null;
 		int routeCount = 0;
 		try {
             reader = new CSVReader(new FileReader(linesCSV));
@@ -192,7 +193,8 @@ public class ScheduleFromCSVConverter {
 
 					// move to mode line
 					newLine = reader.readNext();
-					transportMode = newLine[0];
+					vehicleTypeId = newLine[0];
+					transportMode = HafasDefaults.Vehicles.valueOf(vehicleTypeId).transportMode.modeName;
 					
 					// move to stop IDs line
 					newLine = reader.readNext();
@@ -237,13 +239,13 @@ public class ScheduleFromCSVConverter {
 					// Departure Id
 					Id<Departure> departureId = Id.create(routeCount, Departure.class);
 					// Departure vehicle
-					Id<Vehicle> vehicleId = Id.create(transportMode + "_" + routeId.toString(), Vehicle.class);
+					Id<Vehicle> vehicleId = Id.create(vehicleTypeId + "_" + routeId.toString(), Vehicle.class);
 					// create and add departure
 					Departure departure = scheduleFactory.createDeparture(departureId, firstStopDepartureTime);
 					departure.setVehicleId(vehicleId);
 					transitRoute.addDeparture(departure);
 					try {
-						vehicles.addVehicle(vehicleFactory.createVehicle(departure.getVehicleId(), vehicles.getVehicleTypes().get(Id.create(transportMode, VehicleType.class))));
+						vehicles.addVehicle(vehicleFactory.createVehicle(departure.getVehicleId(), vehicles.getVehicleTypes().get(Id.create(vehicleTypeId, VehicleType.class))));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}

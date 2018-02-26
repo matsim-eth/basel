@@ -19,7 +19,7 @@ public class CSVTables2TransitSchedule {
 		if(args.length == 4) {
 			run(args[0], args[1], args[2], args[3], args[4], args[5]);
 		} else {
-			String path = "H:/Basel/New PT Mapping/OldFiles/";
+			String path = "/Volumes/share-ivt-home-$/Basel/New PT Mapping/OldFiles/";
 			String linesCSV = "lines_list2.csv";
 			String stopsCSV = "stops_list_Jun03_2.csv"; 
 			String vehiclesCSV = "VehicleData.csv";
