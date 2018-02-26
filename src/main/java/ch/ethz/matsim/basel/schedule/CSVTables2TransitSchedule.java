@@ -1,4 +1,4 @@
-package ch.matsim.basel.schedule;
+package ch.ethz.matsim.basel.schedule;
 
 import java.io.IOException;
 

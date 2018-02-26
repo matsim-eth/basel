@@ -21,6 +21,10 @@
             <id>matsim-eth</id>
             <url>http://dl.bintray.com/matsim-eth/matsim</url>
         </repository>
+        <repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
     </repositories>
 
     <dependencies>
@@ -30,33 +34,48 @@
             <version>0.10.0-eth</version>
         </dependency>
 
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-xml</artifactId>
-    <version>0.44.1</version>
-</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-xml</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-areafilter</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-pbf</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-core -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-core</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
 
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-areafilter</artifactId>
-    <version>0.44.1</version>
-</dependency>
-
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-pbf</artifactId>
-    <version>0.44.1</version>
-</dependency>
-
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-core -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-core</artifactId>
-    <version>0.44.1</version>
-</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-compress</artifactId>
+		    <version>1.9</version>
+		</dependency>
+		
+		<!--  
+		<dependency>
+		    <groupId>com.github.sebhoerl</groupId>
+		    <artifactId>baseline_scenario</artifactId>
+		    <version>master-SNAPSHOT</version>
+		</dependency>
+		-->
 
         <dependency>
             <groupId>junit</groupId>
@@ -65,23 +84,23 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+        	<groupId>com.opencsv</groupId>
+        	<artifactId>opencsv</artifactId>
+        	<version>3.8</version>
+        </dependency>
+        <dependency>
         	<groupId>ch.ethz.matsim</groupId>
         	<artifactId>baseline_scenario</artifactId>
         	<version>0.0.1</version>
-    		<scope>system</scope>
-    		<systemPath>${project.basedir}/src/main/resources/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
+        	<scope>system</scope>
+        	<systemPath>/Users/bicudo/Documents/eclipse/dependencies/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
         	<groupId>org.matsim</groupId>
         	<artifactId>pt2matsim</artifactId>
         	<version>0.0.0</version>
-    		<scope>system</scope>
-    		<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-        	<groupId>com.opencsv</groupId>
-        	<artifactId>opencsv</artifactId>
-        	<version>3.8</version>
+        	<scope>system</scope>
+        	<systemPath>/Users/bicudo/Documents/eclipse/dependencies/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
     <properties>
