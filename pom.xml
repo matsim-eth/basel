@@ -93,14 +93,14 @@
         	<artifactId>baseline_scenario</artifactId>
         	<version>0.0.1</version>
         	<scope>system</scope>
-        	<systemPath>/Users/bicudo/Documents/eclipse/dependencies/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
+        	<systemPath>${project.basedir}/src/main/resources/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
         	<groupId>org.matsim</groupId>
         	<artifactId>pt2matsim</artifactId>
         	<version>0.0.0</version>
         	<scope>system</scope>
-        	<systemPath>/Users/bicudo/Documents/eclipse/dependencies/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
+        	<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
         </dependency>
     </dependencies>
     <properties>
