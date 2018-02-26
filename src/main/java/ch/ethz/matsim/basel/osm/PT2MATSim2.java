@@ -35,8 +35,8 @@ import java.io.IOException;
  */
 public class PT2MATSim2 {
 
-	private final static String input = "H:/Basel/New PT Mapping/OldFiles/";
-	private final static String output = "H:/Basel/New PT Mapping/OldFiles/";
+	private final static String input = "TestResources/TestsIVT2018/";
+	private final static String output = "TestResources/TestsIVT2018/";
 
 	public void prepareTests() {
 		// Create output folder if not existing:
@@ -56,7 +56,7 @@ public class PT2MATSim2 {
 		// 3. Map the schedule onto the network
 		mapScheduleToNetwork();
 		// 4. Clean the network to eliminate unused links and nodes
-		cleanNetwork();
+//		cleanNetwork();
 		// 5. Do a plausibility check
 		checkPlausibility();
 	}
@@ -166,10 +166,13 @@ public class PT2MATSim2 {
 				PublicTransitMappingConfigGroup.createDefaultConfig());
 		mapperConfig.getModule("PublicTransitMapping").addParam("inputNetworkFile", output + "basel_network_IVT.xml.gz");
 		mapperConfig.getModule("PublicTransitMapping").addParam("outputNetworkFile", output + "basel_network_IVT_mapped.xml");
-		mapperConfig.getModule("PublicTransitMapping").addParam("outputScheduleFile", output + "Mapped_Basel_Schedule.xml");
+		mapperConfig.getModule("PublicTransitMapping").addParam("outputScheduleFile", output + "basel_schedule_IVT_mapped.xml");
 		mapperConfig.getModule("PublicTransitMapping").addParam("outputStreetNetworkFile", output + "basel_network_IVT_mapped_StreetOnly.xml");
 		mapperConfig.getModule("PublicTransitMapping").addParam("inputScheduleFile", input + "GVMB_Unmapped_Schedule.xml");
 		mapperConfig.getModule("PublicTransitMapping").addParam("scheduleFreespeedModes", "rail, light_rail");
+		mapperConfig.getModule("PublicTransitMapping").addParam("candidateDistanceMultiplier", "3.2"); 
+		mapperConfig.getModule("PublicTransitMapping").addParam("maxTravelCostFactor", "10.0"); 
+		mapperConfig.getModule("PublicTransitMapping").addParam("nLinkThreshold", "10");
 		// Save the mapping config
 		// (usually done manually)
 		new ConfigWriter(mapperConfig).write(output + "MapperConfigAdjusted.xml");
@@ -179,11 +182,11 @@ public class PT2MATSim2 {
 	}
 	
 	
-	public static void cleanNetwork() {
-		CleanNetwork CN = new CleanNetwork(output + "basel_network_IVT_mapped.xml", output + "Mapped_Basel_Schedule.xml");
-		CN.run();
-	}
-	
+//	public static void cleanNetwork() {
+//		CleanNetwork CN = new CleanNetwork(output + "basel_network_IVT_mapped.xml", output + "Mapped_Basel_Schedule.xml");
+//		CN.run();
+//	}
+//	
 	/**
 	 * 	4. The PT2MATSim package provides a plausibility checker to get quick feedback on the mapping process.
 	 *
@@ -193,9 +196,9 @@ public class PT2MATSim2 {
 	
 	public static void checkPlausibility() {
 		CheckMappedSchedulePlausibility.run(
-				output + "Mapped_Basel_Schedule.xml",
+				output + "basel_schedule_IVT_mapped.xml",
 				output + "basel_network_IVT_mapped.xml",
-				"EPSG:2056", // EPSG identifier for WGS84
+				"EPSG:2056", 
 				output + "PlausibilityResultsBasel/"
 		);
 	}
