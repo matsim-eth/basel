@@ -52,7 +52,7 @@ public class MakeScenario {
 		double downsampling = args.length > 2 ? Double.parseDouble(args[2]) : 1.0;
 
 		// TODO: Move down
-		Config config = new AdaptConfig().run(scenarioScale);
+		Config config = new AdaptConfig().run(scenarioScale, "bsl");
 		new ConfigWriter(config).write(OUTPUT+"/output_config.xml");
 
 		Random random = new Random(0);
