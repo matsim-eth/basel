@@ -11,52 +11,99 @@
   <description>Greater Basel MATSim scenario.</description>
   
   <repositories>
-        <!-- Needed for geotools in matsim main -->
+        <repository>
+        	<id>pt2matsim</id>
+        	<url>http://dl.bintray.com/polettif/matsim</url>
+    	</repository>
+		
+        <repository>
+            <id>matsim-eth</id>
+            <url>http://dl.bintray.com/matsim-eth/matsim</url>
+        </repository>
+        
+		<repository>
+	    	<id>eth-ivt-matsim</id>
+	    	<url>https://packagecloud.io/eth-ivt/matsim/maven2</url>
+	    	<releases>
+	      		<enabled>true</enabled>
+	    	</releases>
+	    	<snapshots>
+	      		<enabled>true</enabled>
+	    	</snapshots>
+	  	</repository>
+	  	<!-- -->
+	  	<!-- Needed for geotools in matsim main --> 
         <repository>
             <id>osgeo</id>
             <name>Geotools repository</name>
             <url>http://download.osgeo.org/webdav/geotools</url>
         </repository>
         <repository>
-            <id>matsim-eth</id>
-            <url>http://dl.bintray.com/matsim-eth/matsim</url>
-        </repository>
+		    <id>jitpack.io</id>
+		    <url>https://jitpack.io</url>
+		</repository>
     </repositories>
 
     <dependencies>
         <dependency>
-            <groupId>org.matsim</groupId>
-            <artifactId>matsim</artifactId>
-            <version>0.10.0-eth</version>
-        </dependency>
+			<groupId>org.matsim</groupId>
+			<artifactId>matsim</artifactId>
+			<version>0.10.0-nov17</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>ch.ethz.matsim</groupId>
+			<artifactId>baseline_scenario</artifactId>
+			<version>0.0.1-SNAPSHOT</version>
+		</dependency>
+		
+		<dependency>
+			<groupId>org.matsim</groupId>
+			<artifactId>pt2matsim</artifactId>
+			<version>18.2</version>
+		</dependency>
+		 <!--
+		<dependency>
+		    <groupId>com.github.polettif</groupId>
+		    <artifactId>pt2matsim</artifactId>
+		    <version>master-SNAPSHOT</version>
+		</dependency>
+		-->
 
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-xml</artifactId>
-    <version>0.44.1</version>
-</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-xml</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-areafilter</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-pbf</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-core -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-core</artifactId>
+		    <version>0.44.1</version>
+		</dependency>
 
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-areafilter</artifactId>
-    <version>0.44.1</version>
-</dependency>
-
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-pbf</artifactId>
-    <version>0.44.1</version>
-</dependency>
-
-<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-core -->
-<dependency>
-    <groupId>org.openstreetmap.osmosis</groupId>
-    <artifactId>osmosis-core</artifactId>
-    <version>0.44.1</version>
-</dependency>
+		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
+		<dependency>
+		    <groupId>org.apache.commons</groupId>
+		    <artifactId>commons-compress</artifactId>
+		    <version>1.9</version>
+		</dependency>
 
         <dependency>
             <groupId>junit</groupId>
@@ -65,24 +112,27 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+        	<groupId>com.opencsv</groupId>
+        	<artifactId>opencsv</artifactId>
+        	<version>3.8</version>
+        </dependency>
+        <!-- 
+        <dependency>
         	<groupId>ch.ethz.matsim</groupId>
         	<artifactId>baseline_scenario</artifactId>
         	<version>0.0.1</version>
-    		<scope>system</scope>
-    		<systemPath>${project.basedir}/src/main/resources/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
+        	<scope>system</scope>
+        	<systemPath>${project.basedir}/src/main/resources/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
         </dependency>
         <dependency>
         	<groupId>org.matsim</groupId>
         	<artifactId>pt2matsim</artifactId>
         	<version>0.0.0</version>
-    		<scope>system</scope>
-    		<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
+        	<scope>system</scope>
+        	<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
         </dependency>
-        <dependency>
-        	<groupId>com.opencsv</groupId>
-        	<artifactId>opencsv</artifactId>
-        	<version>3.8</version>
-        </dependency>
+        		 -->
+        
     </dependencies>
     <properties>
   		<maven.compiler.target>1.8</maven.compiler.target>
