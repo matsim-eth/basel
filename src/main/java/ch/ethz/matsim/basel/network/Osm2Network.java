@@ -1,4 +1,4 @@
-package ch.ethz.matsim.basel.osm;
+package ch.ethz.matsim.basel.network;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,60 +15,31 @@ import org.matsim.pt2matsim.osm.lib.OsmFileReader;
 import org.matsim.pt2matsim.tools.NetworkTools;
 import org.openstreetmap.osmosis.core.Osmosis;
 
-/**
- * Run this class to create a multimodal MATSim network from OSM.
- *
- * @author polettif
+/*
+ * Run this class to create the Basel MATSim network from OSM.
  */
-public final class OSM2MATSim {
+public final class Osm2Network {
 
-	private OSM2MATSim() {
+	private Osm2Network() {
 	}
 
-	/**
-	 * Converts an osm file to a MATSim network. The input and output file as well
-	 * as conversion parameters are defined in this file. Run {@link CreateDefaultOsmConfig}
-	 * to create a default config.
-	 *
-	 * @param args [0] the config.xml file<br/>
+	/*
+	 * Converts the osm input file to the MATSim network. The input and output file as well
+	 * as conversion parameters are defined in the conversion config.
 	 */
 	public static void main(String[] args) {
 		if(args.length == 1) {
 			run(args[0]);
 		} else {
-			run("H:/Basel/New PT Mapping/OldFiles/baselConfigIVT.xml");
-//			throw new IllegalArgumentException("Wrong number of arguments");
+			try {
+				GenerateOsmInputData.run();
+				run("resources/network/input/config_OSM_Basel_IVT.xml");
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException("Wrong number of arguments or default IVT config not found.");
+			}
 		}
 	}
-
-	/**
-	 * Converts an osm file to a MATSim network. The input and output file as well
-	 * as conversion parameters are defined in the config file. Run {@link CreateDefaultOsmConfig}
-	 * to create a default config.
-	 *
-	 * @param configFile the config.xml file
-	 */
-//	public static void run(String configFile) {
-//		Config configAll = ConfigUtils.loadConfig(configFile, new OsmExtendedConverterConfigGroup());
-//		OsmExtendedConverterConfigGroup config = ConfigUtils.addOrGetModule(configAll, OsmExtendedConverterConfigGroup.GROUP_NAME, OsmExtendedConverterConfigGroup.class );
-//
-//		run(configFile);
-//	}
-//
-//	/**
-//	 * Converts an osm file with default conversion parameters.
-//	 * @param osmFile the osm file
-//	 * @param outputNetworkFile the path to the output network file
-//	 * @param outputCoordinateSystem output coordinate system (no transformation is applied if <tt>null</tt>)
-//	 */
-//	public static void run(String osmFile, String outputNetworkFile, String outputCoordinateSystem) {
-//		OsmExtendedConverterConfigGroup config = OsmExtendedConverterConfigGroup.createDefaultConfig();
-//		config.setOsmFile(osmFile);
-//		config.setOutputNetworkFile(outputNetworkFile);
-//		config.setOutputCoordinateSystem(outputCoordinateSystem);
-//
-//		run(config);
-//	}
 
 	public static void run(String configFile) {
 		Config configAll = ConfigUtils.loadConfig(configFile, new OsmExtendedConverterConfigGroup());
@@ -131,6 +102,5 @@ public final class OSM2MATSim {
 			}
 		
 		NetworkTools.writeNetwork(finalNetwork, config.getOutputNetworkFile());
-		
 	}
 }

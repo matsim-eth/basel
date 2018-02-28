@@ -1,4 +1,4 @@
-package ch.ethz.matsim.basel.scenario;
+package ch.ethz.matsim.basel.facilities;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -30,9 +30,9 @@ import org.matsim.facilities.Facility;
 import org.matsim.facilities.OpeningTime;
 import org.matsim.facilities.OpeningTimeImpl;
 
-public class RunCreateFacilitiesFromFactual {
+public class CreateFactFacilities {
 
-	private final static Logger log = Logger.getLogger(RunCreateFacilitiesFromFactual.class);
+	private final static Logger log = Logger.getLogger(CreateFactFacilities.class);
 	
 	private static Scenario scenario;
 	private static Network network;
@@ -43,7 +43,7 @@ public class RunCreateFacilitiesFromFactual {
 	private final static String networkFile = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
 	
 	public static void main(String[] args) {
-		RunCreateFacilitiesFromFactual facilitiesCreator = new RunCreateFacilitiesFromFactual();
+		CreateFactFacilities facilitiesCreator = new CreateFactFacilities();
 		facilitiesCreator.init();
 		facilitiesCreator.run();
 		new FacilitiesWriter(scenario.getActivityFacilities()).write(outputFacilities);
@@ -59,7 +59,7 @@ public class RunCreateFacilitiesFromFactual {
 		 * Create the scenario
 		 */
 		Config config = ConfigUtils.createConfig();
-		RunCreateFacilitiesFromFactual.scenario = ScenarioUtils.createScenario(config);
+		CreateFactFacilities.scenario = ScenarioUtils.createScenario(config);
 		network = scenario.getNetwork();
 		new MatsimNetworkReader(network).readFile(networkFile);
 	}
@@ -204,7 +204,7 @@ public class RunCreateFacilitiesFromFactual {
 //	}
 //		
 //	public void write(String facilitiesOutputPath) {
-//		new FacilitiesWriter(RunCreateFacilitiesFromFactual.scenario.getActivityFacilities()).write(facilitiesOutputPath);
+//		new FacilitiesWriter(CreateFactFacilities.scenario.getActivityFacilities()).write(facilitiesOutputPath);
 //	}
 
 }

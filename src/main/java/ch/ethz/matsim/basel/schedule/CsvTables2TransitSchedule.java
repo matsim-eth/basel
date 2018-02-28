@@ -10,30 +10,36 @@ import org.matsim.pt2matsim.tools.ScheduleTools;
 import org.matsim.vehicles.VehicleUtils;
 import org.matsim.vehicles.Vehicles;
 
-public class CSVTables2TransitSchedule {
+import ch.ethz.matsim.basel.network.GenerateOsmInputData;
+
+public class CsvTables2TransitSchedule {
 	
-	private CSVTables2TransitSchedule() {
+	private CsvTables2TransitSchedule() {
 	}
 
 	public static void main(String[] args) throws IOException {
 		if(args.length == 4) {
 			run(args[0], args[1], args[2], args[3], args[4], args[5]);
 		} else {
-			String path = "/Volumes/share-ivt-home-$/Basel/New PT Mapping/OldFiles/";
-			String linesCSV = "lines_list2.csv";
-			String stopsCSV = "stops_list_Jun03_2.csv"; 
-			String vehiclesCSV = "VehicleData.csv";
-			String outputCoordinateSystem = "null";
-			String outputScheduleFile = "reconvertedSchedule.xml"; 
-			String outputVehicleFile = "reconvertedVehicles.xml";
-			run(path+linesCSV, path+stopsCSV, path+vehiclesCSV, outputCoordinateSystem, path+outputScheduleFile, path+outputVehicleFile);
-			//throw new IllegalArgumentException(args.length + " instead of 6 arguments given");
+			try {
+				String path = "resources/schedule/";
+				String linesCSV = "input/lines_list2016.csv";
+				String stopsCSV = "input/stops_list2016.csv"; 
+				String vehiclesCSV = "input/VehicleData.csv";
+				String outputCoordinateSystem = "null"; // set to null if no conversion is needed
+				String outputScheduleFile = "output/Unmapped_Basel_IVT_Schedule.xml"; 
+				String outputVehicleFile = "output/Unmapped_Basel_IVT_Vehicles.xml";
+				run(path+linesCSV, path+stopsCSV, path+vehiclesCSV, outputCoordinateSystem, path+outputScheduleFile, path+outputVehicleFile);
+			} catch (Exception e) {
+				e.printStackTrace();
+				throw new IllegalArgumentException("Wrong number of arguments or default files not found.");
+			}
 		}
 	}
 
-	/**
+	/*
 	 * Converts all input files in and writes the output schedule and vehicles to the respective
-	 * files. Stop Facility coordinates are transformed to <tt>outputCoordinateSystem</tt>.
+	 * files. 
 	 */
 	public static void run(String linesCSV, String stopsCSV, String vehiclesCSV, String outputCoordinateSystem, 
 			String outputScheduleFile, String outputVehicleFile) throws IOException {
