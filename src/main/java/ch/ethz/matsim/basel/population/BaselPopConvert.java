@@ -43,17 +43,16 @@ public class BaselPopConvert {
 	private static Population population;
 	private static PopulationFactory populationFactory;
 	
-	// paths don't need to be changed, just add the TestResources folder inside the project folder
-	final static String SYNTH_POP = new File("TestResources/input/PlansFile2_corrected_sample.csv").getAbsolutePath();
-	final static String NETWORK = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
-	final static String FACILITIES = new File("TestResources/input/facilities.xml.gz").getAbsolutePath();
-	final static String OUTPUT_PLANS = new File("TestResources/output/population.xml.gz").getAbsolutePath();
-	final static String OUTPUT_FACILITIES = new File("TestResources/output/facilities.xml.gz").getAbsolutePath();
-	final static String OUTPUT_ATTRIBUTES = new File("TestResources/output/population_attributes.xml.gz").getAbsolutePath();
-	final static String OUTPUT = new File("TestResources/output/sim/").getAbsolutePath();
-	final static String CONFIG = new File("TestResources/input/config.xml").getAbsolutePath();
-	final static CoordinateTransformation TRANSFORMATION = TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
-	
+	final static String popPath = "resources/population/";
+	final static String networkPath = "resources/network/";
+	final static String facilitiesPath = "resources/facilities/";
+	final static String SYNTH_POP = popPath + "input/PlansFile2_corrected_sample.csv";
+	final static String NETWORK = networkPath + "output/Mapped_basel_IVT_network.xml.gz";
+	final static String FACILITIES = facilitiesPath + "output/facilities.xml.gz";
+	final static String OUTPUT_PLANS = popPath + "output/population.xml.gz";
+	final static String OUTPUT_ATTRIBUTES = popPath + "output/population_attributes.xml.gz";
+	final static CoordinateTransformation TRANSFORMATION = 
+			TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
 	
 	private Random random = new Random(3838494);
 
@@ -69,61 +68,7 @@ public class BaselPopConvert {
 		popGen.populationCreation();
 		new PopulationWriter(getScenario().getPopulation(), getScenario().getNetwork()).write(OUTPUT_PLANS);
 		new ObjectAttributesXmlWriter(getScenario().getPopulation().getPersonAttributes()).writeFile(OUTPUT_ATTRIBUTES);
-		new FacilitiesWriter(getScenario().getActivityFacilities()).write(OUTPUT_FACILITIES);
-		
-		// Prepares config for running simulation
-		Config config = ConfigUtils.createConfig();
-		
-		String[] types = new String[] {"h1", "h4", "h6", "h9", "h12",
-									   "w1", "w4", "w6", "w9", "w12",
-									   "e1", "e4", "e8",
-									   "s05", "s1", "s2",
-									   "l1", "l2", "l4", "l8",
-									   "t05", "t1", "t4"};
-		for (String type : types) {
-			ActivityParams params = new ActivityParams(type);
-			double dur = Double.parseDouble(type.substring(1));
-			if (dur == 5.0) dur = 1800;
-			else dur *= 3600;
-			params.setTypicalDuration(dur);
-			config.planCalcScore().addActivityParams(params);
-			log.info(params.getTypicalDuration());
-		}
-//		System.exit(0);
-		
-		
-		// Change here to add/remove score strategies
-		StrategySettings settings = new StrategySettings();
-		settings.setStrategyName("ChangeExpBeta");
-		settings.setWeight(1.0);
-		config.strategy().addStrategySettings(settings);
-		
-		// other config settings
-		config.plans().setInputFile(OUTPUT_PLANS);
-		config.plans().setInputPersonAttributeFile(OUTPUT_ATTRIBUTES);
-		config.network().setInputFile(NETWORK);
-		config.facilities().setInputFile(OUTPUT_FACILITIES);
-		config.controler().setOutputDirectory(OUTPUT);
-		config.global().setCoordinateSystem("EPSG:2056");
-		config.qsim().setFlowCapFactor(0.01);
-//		config.counts().setCountsScaleFactor(100d / prctScenario);
-//		config.ptCounts().setCountsScaleFactor(100d / prctScenario);
-		config.controler().setOverwriteFileSetting(OverwriteFileSetting.deleteDirectoryIfExists);
-//		config.plansCalcRoute().setNetworkModes(Arrays.asList("car", "pt"));
-		
-		// iteration settings
-		config.controler().setFirstIteration(0);
-		config.controler().setLastIteration(10);
-		config.controler().setWriteEventsInterval(10);
-		config.controler().setWritePlansInterval(5);
-		config.controler().setWriteSnapshotsInterval(1);
-		config.qsim().setEndTime(3600*24);
-		
-		// run
-		Controler controler = new Controler(config);
-		
-//		controler.run();
-		
+		//new FacilitiesWriter(getScenario().getActivityFacilities()).write(OUTPUT_FACILITIES);
 	}
 	
 	public BaselPopConvert() {
@@ -295,7 +240,8 @@ public class BaselPopConvert {
 				plan.addActivity(work);
 				employed = true;
 				previousActivity = work;
-			}else if (tChain[i].equals("E")) {
+			}
+			else if (tChain[i].equals("E")) {
 				Coord coord = getScenario().getActivityFacilities().getFacilities().get(primActFacilityID).getCoord();
 				Activity education = getPopulationFactory().createActivityFromCoord("e", coord);
 				if (employed) education.setFacilityId(getRandomFacility(education, previousActivity.getCoord()).getId());

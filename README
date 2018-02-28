@@ -31,7 +31,27 @@ First run CsvTables2TransitSchedule.java (if you inserted correctly the inputs i
 This will result in the unmapped schedules based on the custom csv schedules. 
 Afterwards run MapScheduleWithNetwork.java. No additional input files are needed.
 Note that the output network files will be added to resource/network/output instead of resource/schedule/output.
-The results are the complete schedule and network, including PT, for the Basel scenario.
+The results are the complete mapped schedule and network, including PT, for the Basel scenario.
+
+<<Facilities>>
+First add the raw data (cdata.csv) to the folder resources/facilities/input.
+Then run CreateFactFacilities.java. The output will be added to resources/facilities/output.
+
+<<Population>>
+To generate the population, place the input PlansFile.csv into resources/population/input.
+Remember to use in the PlansFile.csv creation only facility IDs from the file resources/population/input/ValidFacilityIDs.txt
+Then use the script PlansFileFixer.R to correct some issues with the input data. 
+You might need to adjust the name of the corrected input file in the class BaselPopConverter.java.
+The other input files the class uses are outputs of the previous steps.
+This class' output are the population.xml and population_attributes.xml files.
+
+<<Simulating>>
+For simulating, no additional input file is needed.
+First use the class MakeScenario.java. Scenario scale and number of threads are adjustable in the beggining of the class.
+The outputs of this class generates the inputs for the simulation. These are then saved in resource/simulation/input.
+Before running the RunScenario.java, manually check and adjust the sim_config.xml (in resources/simulation/input).
+
+
 
 
 

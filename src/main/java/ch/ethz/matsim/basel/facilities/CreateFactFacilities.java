@@ -37,20 +37,23 @@ public class CreateFactFacilities {
 	private static Scenario scenario;
 	private static Network network;
 	
-	private final static String factualFacilitiesFile = new File("TestResources/input/cdata.csv").getAbsolutePath();
-	private final static String outputFacilities = new File("TestResources/output/FactualFacilities2.xml.gz").getAbsolutePath();
-	private final static CoordinateTransformation transformation = TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
-	private final static String networkFile = new File("TestResources/input/FinalNetwork2.xml.gz").getAbsolutePath();
+	private final static String facilitiesPath = "resources/facilities/";
+	private final static String networkPath = "resources/network/";
+	private final static String outputFacilities = facilitiesPath + "output/facilities.xml.gz";
+	private final static String factFacilitiesFile = facilitiesPath + "input/cdata.csv";
+	private final static CoordinateTransformation transformation = 
+			TransformationFactory.getCoordinateTransformation("WGS84", "CH1903_LV03_Plus");
+	private final static String networkFile = networkPath + "output/Mapped_basel_IVT_network.xml.gz";
 	
 	public static void main(String[] args) {
 		CreateFactFacilities facilitiesCreator = new CreateFactFacilities();
 		facilitiesCreator.init();
 		facilitiesCreator.run();
 		new FacilitiesWriter(scenario.getActivityFacilities()).write(outputFacilities);
+		// to test if the output is loadable
 		Config config = ConfigUtils.createConfig();
 		Scenario newScenario = ScenarioUtils.createScenario(config);
 		new FacilitiesReaderMatsimV1(newScenario).readFile(outputFacilities);
-//		new FacilitiesWriter(scenario.getActivityFacilities()).write("output_facilities.xml.gz");
 		log.info("Creation finished #################################");
 	}
 	
@@ -66,23 +69,22 @@ public class CreateFactFacilities {
 	
 	private void run() {
 		/*
-		 * Read the factual.com facilities extracted data
+		 * Read the fact facilities extracted data
 		 */
-		this.readFactualData();
-//		this.addLinkIds();
+		this.readfactData();
 	
 	}
 
-	private void readFactualData () {
+	private void readfactData () {
 		try {
-			BufferedReader bufferedReader = new BufferedReader(new FileReader(factualFacilitiesFile));
+			BufferedReader bufferedReader = new BufferedReader(new FileReader(factFacilitiesFile));
 			bufferedReader.readLine(); //skip header
 			
 			// indexes
 			int index_UID = 2;
 			int index_xCoord = 7;
 			int index_yCoord = 8;
-			int index_factualId = 9;
+			int index_factId = 9;
 			int index_categories = 11;
 			int index_activityTypes[] = {19, 20, 21};
 			int index_capacities[] = {22, 23, 24};
@@ -151,10 +153,8 @@ public class CreateFactFacilities {
 					}
 					
 					// Set facility description
-					desc += parts[index_categories].replace("[", "").replace("]", "").replace("u'", "").replace("u\"", "").replace("'", "").replace("\"", "") + " (" + parts[index_factualId] + ").";
+					desc += parts[index_categories].replace("[", "").replace("]", "").replace("u'", "").replace("u\"", "").replace("'", "").replace("\"", "") + " (" + parts[index_factId] + ").";
 					facility.setDesc(desc);
-					
-//					System.out.println(facility.getId().toString());
 					
 					activityTypes.clear();
 					capacities.clear();
@@ -185,26 +185,4 @@ public class CreateFactFacilities {
 		}
 		return oTimes;
 	}
-	
-//	private void addLinkIds() {
-//		new FacilitiesReaderMatsimV1(scenario).readFile(outputFacilities);
-//		ActivityFacilities facilities = scenario.getActivityFacilities();
-//		
-//		
-//		
-//		Map<Id<ActivityFacility>, ? extends ActivityFacility> facilitiesMap = new HashMap<Id<ActivityFacility>, ActivityFacility>();  
-//		facilitiesMap = facilities.getFacilities();
-//		
-//		for (Id<ActivityFacility> key : facilitiesMap.keySet()){
-//			Facility fac = facilitiesMap.get(key);
-//			
-//			
-//
-//        }
-//	}
-//		
-//	public void write(String facilitiesOutputPath) {
-//		new FacilitiesWriter(CreateFactFacilities.scenario.getActivityFacilities()).write(facilitiesOutputPath);
-//	}
-
 }
