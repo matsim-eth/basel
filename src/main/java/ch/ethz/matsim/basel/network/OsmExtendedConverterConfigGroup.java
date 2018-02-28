@@ -1,4 +1,4 @@
-package ch.ethz.matsim.basel.osm;
+package ch.ethz.matsim.basel.network;
 
 import org.matsim.core.api.internal.MatsimParameters;
 import org.matsim.core.config.ConfigGroup;

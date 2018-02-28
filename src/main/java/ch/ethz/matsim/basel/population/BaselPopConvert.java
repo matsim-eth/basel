@@ -1,4 +1,4 @@
-package ch.ethz.matsim.basel.scenario;
+package ch.ethz.matsim.basel.population;
 
 import java.io.BufferedReader;
 import java.io.File;

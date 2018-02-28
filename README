@@ -1,0 +1,38 @@
+This package allows to create and run a MATSim Basel scenario. 
+Important: this is still a work in progress, the Basel scenario is not yet ready. Please use it with care and submit any problems to the issue tracker.
+
+The instructions below are a guide to setting up the scenario. Most of the input data needed are not in the repository and must be either downloaded or elsewhere obtained (some of them are protected by license and in power of the IVT).
+
+<<Network>>
+The whole network conversion process can be run directly from class Osm2MATSim.java.
+To set up the network, please first download the osm.pbf files from https://download.geofabrik.de/europe.html. The files needed are:
+switzerland-latest.osm.pbf
+alsace-latest.osm.pbf
+baden-wuerttemberg-latest.osm.pbf
+
+These files are to be added to resources/network/input
+
+The input osm files are merged and cut to the scenario's area (spatial filter defined in GVMB_Buffer.poly). This is performed by class GenerateOsmInputData.java.
+ 
+The resulting output is then converted to the initial network and saved in resources/network/output. To adjust the conversion parameters please adjust the config file (config_OSM_Basel_IVT.xml). This process is done by class OsmNetworkConverter.java.
+ 
+<<Schedule>>
+For the Basel scenario, a custom conversion format had to be used. The happens through CsvTables2TransitSchedule.java and the output are the unmapped schedule and vehicle files. 
+The inputs must be added to the folder resources/schedule/input are:
+lines_list2016.csv
+stops_list2016.csv
+VehiclesData.csv
+hafasSchedule.xml
+hafasVehicles.xml
+ 
+Additionally, the file GVMB_Stops.csv is already in the folder and contains all stop ids that are part of the scenario's area and will be used as a filter to keep only routes that uses one of these stops.
+ 
+First run CsvTables2TransitSchedule.java (if you inserted correctly the inputs into the correct folders it should be directly runnable).
+This will result in the unmapped schedules based on the custom csv schedules. 
+Afterwards run MapScheduleWithNetwork.java. No additional input files are needed.
+Note that the output network files will be added to resource/network/output instead of resource/schedule/output.
+The results are the complete schedule and network, including PT, for the Basel scenario.
+
+
+
+ 

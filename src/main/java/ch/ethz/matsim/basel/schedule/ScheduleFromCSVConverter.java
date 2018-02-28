@@ -37,24 +37,22 @@ import org.matsim.vehicles.VehiclesFactory;
 
 import com.opencsv.CSVReader;
 
+/*
+ * This class reads from the custom CSV schedule files lines_list.csv and stops_list.csv
+ * and outputs an unmapped MATSim schedule.
+ */
+
 public class ScheduleFromCSVConverter {
 	
 	private TransitSchedule schedule = null;
 	private CoordinateTransformation transformation = null; 
 	private Vehicles vehicles = null;
-	private Map<Coord, String> usedCoordinates = new HashMap<>();
 	private TransitScheduleFactory scheduleBuilder;
 	
 	public ScheduleFromCSVConverter(TransitSchedule schedule, Vehicles vehicles, CoordinateTransformation transformation) {
 		this.schedule = schedule;
 		this.vehicles = vehicles;
 		this.transformation = transformation;
-		this.scheduleBuilder = this.schedule.getFactory();
-	}
-	
-	public ScheduleFromCSVConverter(TransitSchedule schedule, Vehicles vehicles) {
-		this.schedule = schedule;
-		this.vehicles = vehicles;
 		this.scheduleBuilder = this.schedule.getFactory();
 	}
 	
@@ -110,24 +108,12 @@ public class ScheduleFromCSVConverter {
 	}
 	
 	private void createStop(Id<TransitStopFacility> stopId, Coord coord, String stopName) {
-
-//		//check if coordinates are already used by another facility
-//		String check = usedCoordinates.put(coord, stopName);
-//		if(check != null && !check.equals(stopName)) {
-//			if(check.contains(stopName) || stopName.contains(check)) {
-//				log.info("Two stop facilities at " + coord + " \"" + check + "\" & \"" + stopName + "\"");
-//			} else {
-//				log.warn("Two stop facilities at " + coord + " \"" + check + "\" & \"" + stopName + "\"");
-//			}
-//		}
-
 		TransitStopFacility stopFacility = this.scheduleBuilder.createTransitStopFacility(stopId, coord, false);
 		stopFacility.setName(stopName);
 		this.schedule.addStopFacility(stopFacility);
 		Map<Id<TransitStopFacility>, TransitStopFacility> stopFacilities = this.schedule.getFacilities();
 		stopFacilities.values();
 		stopFacilities.get(stopId);
-		//stopFacilities.get(stopId.toString());
 	}
 
 	private void vehiclesTypesReader(String vehiclesCSV) {
@@ -156,6 +142,7 @@ public class ScheduleFromCSVConverter {
 
 				vehicles.addVehicleType(vehicleType);
 			}
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -253,6 +240,7 @@ public class ScheduleFromCSVConverter {
 					transitLine.addRoute(transitRoute);
             	}
 			}
+            reader.close();
         } catch (IOException e) {
             e.printStackTrace();
         }

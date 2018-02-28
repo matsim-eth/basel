@@ -1,36 +1,28 @@
 package ch.ethz.matsim.basel.schedule;
 
-import java.util.Arrays;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.HashSet;
 import java.util.Set;
 
-import com.opencsv.CSVReader;
-
-import java.io.FileReader;
-import java.io.IOException;
-
-import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
-import org.matsim.pt2matsim.tools.debug.ScheduleCleaner;
 import org.matsim.pt2matsim.tools.ScheduleTools;
+import org.matsim.pt2matsim.tools.debug.ScheduleCleaner;
+
+import com.opencsv.CSVReader;
 
 public class ScheduleFixAndMerge {
-	static String path = "/Volumes/share-ivt-home-$/Basel/New PT Mapping/";
-	static String inputSchedule1 = "OldFiles/reconvertedSchedule.xml";
-	static String inputSchedule2 = "S-Bahn_DE/hafasSchedule.xml";
-	static String outputSchedule = "OldFiles/GVMB_Unmapped_Schedule.xml";
-	//	static String outputSchedule = "S-Bahn_DE/hafasSchedule_railGVMB.xml";
-	static String stopsGVMBcsv = "OldFiles/GVMB_Stops.csv";
 	static Set<Id<TransitStopFacility>> stopsGVMB = new HashSet<Id<TransitStopFacility>>();
 	static CSVReader reader = null;
 	
-	public static void main(String[] args) {
+	public static void run(String path2InputSchedule1, 
+			String path2InputSchedule2, String path2StopsFilterCsv, String path2OutputSchedule) {
 		
 		// populate set with GVMB stops ids
 		try {
-            reader = new CSVReader(new FileReader(path+stopsGVMBcsv));
+            reader = new CSVReader(new FileReader(path2StopsFilterCsv));
             String[] line;
             while ((line = reader.readNext()) != null) {
             	stopsGVMB.add(Id.create(line[2], TransitStopFacility.class));
@@ -38,17 +30,14 @@ public class ScheduleFixAndMerge {
         } catch (IOException e) {
             e.printStackTrace();
         }
-		
-		TransitSchedule schedule1 = ScheduleTools.readTransitSchedule(path+inputSchedule1);
-		TransitSchedule schedule2 = ScheduleTools.readTransitSchedule(path+inputSchedule2);
+		TransitSchedule schedule1 = ScheduleTools.readTransitSchedule(path2InputSchedule1);
+		TransitSchedule schedule2 = ScheduleTools.readTransitSchedule(path2InputSchedule2);
 		ScheduleTools.mergeSchedules(schedule1, schedule2);
-//		ScheduleCleaner.removeTransitRouteByMode(schedule, new HashSet<>(Arrays.asList("bus", "tram", "ferry")));
 		ScheduleCleaner.removeMapping(schedule1);
 		ScheduleCleaner.cutSchedule(schedule1, stopsGVMB);
-//		ScheduleCleaner.cutSchedule(schedule, new Coord(2612771.061763661,1271489.005109281), 25000.0);
 		ScheduleCleaner.removeNotUsedStopFacilities(schedule1);
-		ScheduleTools.writeTransitSchedule(schedule1, path+outputSchedule);
- 
+		
+		ScheduleTools.writeTransitSchedule(schedule1, path2OutputSchedule);
     }
 
 }

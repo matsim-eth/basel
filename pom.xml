@@ -62,40 +62,47 @@
 			<artifactId>pt2matsim</artifactId>
 			<version>18.2</version>
 		</dependency>
-		 <!--
-		<dependency>
-		    <groupId>com.github.polettif</groupId>
-		    <artifactId>pt2matsim</artifactId>
-		    <version>master-SNAPSHOT</version>
-		</dependency>
-		-->
-
+		
 		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
 		<dependency>
 		    <groupId>org.openstreetmap.osmosis</groupId>
 		    <artifactId>osmosis-xml</artifactId>
-		    <version>0.44.1</version>
+		    <version>0.46</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-set</artifactId>
+		    <version>0.46</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
+		<dependency>
+		    <groupId>org.openstreetmap.osmosis</groupId>
+		    <artifactId>osmosis-tagfilter</artifactId>
+		    <version>0.46</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
 		<dependency>
 		    <groupId>org.openstreetmap.osmosis</groupId>
 		    <artifactId>osmosis-areafilter</artifactId>
-		    <version>0.44.1</version>
+		    <version>0.46</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-pbf -->
 		<dependency>
 		    <groupId>org.openstreetmap.osmosis</groupId>
 		    <artifactId>osmosis-pbf</artifactId>
-		    <version>0.44.1</version>
+		    <version>0.46</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-core -->
 		<dependency>
 		    <groupId>org.openstreetmap.osmosis</groupId>
 		    <artifactId>osmosis-core</artifactId>
-		    <version>0.44.1</version>
+		    <version>0.46</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.apache.commons/commons-compress -->
@@ -116,23 +123,6 @@
         	<artifactId>opencsv</artifactId>
         	<version>3.8</version>
         </dependency>
-        <!-- 
-        <dependency>
-        	<groupId>ch.ethz.matsim</groupId>
-        	<artifactId>baseline_scenario</artifactId>
-        	<version>0.0.1</version>
-        	<scope>system</scope>
-        	<systemPath>${project.basedir}/src/main/resources/baseline_scenario-0.0.1-SNAPSHOT.jar</systemPath>
-        </dependency>
-        <dependency>
-        	<groupId>org.matsim</groupId>
-        	<artifactId>pt2matsim</artifactId>
-        	<version>0.0.0</version>
-        	<scope>system</scope>
-        	<systemPath>${project.basedir}/src/main/resources/pt2matsim-0.0.0-SNAPSHOT.jar</systemPath>
-        </dependency>
-        		 -->
-        
     </dependencies>
     <properties>
   		<maven.compiler.target>1.8</maven.compiler.target>
