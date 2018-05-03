@@ -3,14 +3,10 @@ package ch.ethz.matsim.basel.schedule;
 import org.matsim.core.config.Config;
 import org.matsim.core.config.ConfigUtils;
 import org.matsim.core.config.ConfigWriter;
-import org.matsim.pt.transitSchedule.api.TransitSchedule;
-import org.matsim.pt2matsim.run.*;
-import org.matsim.pt2matsim.tools.ScheduleTools;
-import org.matsim.pt2matsim.config.OsmConverterConfigGroup;
 import org.matsim.pt2matsim.config.PublicTransitMappingConfigGroup;
-
-import java.io.File;
-import java.io.IOException;
+import org.matsim.pt2matsim.run.CheckMappedSchedulePlausibility;
+import org.matsim.pt2matsim.run.CreateDefaultPTMapperConfig;
+import org.matsim.pt2matsim.run.PublicTransitMapper;
 
 /*
  * This class maps the schedule and network together as well as some pre-processing to match the scenario's area.
@@ -46,6 +42,7 @@ public class MapScheduleWithNetwork {
 	 * 	to the converted OSM network of the Waterloo Area, Canada.
 	 */
 	
+	@SuppressWarnings("deprecation")
 	public static void mapScheduleToNetwork() {
 		// Create a mapping config:
 		CreateDefaultPTMapperConfig.main(new String[]{schedulePath + "output/MapperConfig.xml"});

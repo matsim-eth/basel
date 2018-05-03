@@ -10,8 +10,6 @@ import org.matsim.pt2matsim.tools.ScheduleTools;
 import org.matsim.vehicles.VehicleUtils;
 import org.matsim.vehicles.Vehicles;
 
-import ch.ethz.matsim.basel.network.GenerateOsmInputData;
-
 public class CsvTables2TransitSchedule {
 	
 	private CsvTables2TransitSchedule() {
@@ -48,7 +46,7 @@ public class CsvTables2TransitSchedule {
 		CoordinateTransformation transformation = !outputCoordinateSystem.equals("null") ?
 				TransformationFactory.getCoordinateTransformation("WGS84", outputCoordinateSystem) : new IdentityTransformation();
 
-		ScheduleFromCSVConverter converter = new ScheduleFromCSVConverter(schedule, vehicles, transformation);
+		ScheduleFromCsvConverter converter = new ScheduleFromCsvConverter(schedule, vehicles, transformation);
 		converter.run(linesCSV, stopsCSV, vehiclesCSV);
 		
 		ScheduleTools.writeTransitSchedule(schedule, outputScheduleFile);

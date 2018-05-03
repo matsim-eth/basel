@@ -95,8 +95,7 @@ public class OsmNetworkConverter {
 
 		Map<Id<Osm.Node>, Osm.Node> nodes = osmData.getNodes();
 		Map<Id<Osm.Way>, Osm.Way> ways = osmData.getWays();
-		Map<Id<Osm.Relation>, Osm.Relation> relations = osmData.getRelations();
-
+		
 		AllowedTagsFilter serviceRailTracksFilter = new AllowedTagsFilter();
 		serviceRailTracksFilter.add(Osm.ElementType.WAY, Osm.Key.SERVICE, null);
 

@@ -3,15 +3,12 @@ package ch.ethz.matsim.basel.schedule;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
-import org.matsim.core.utils.collections.MapUtils;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.misc.Counter;
 import org.matsim.pt.transitSchedule.api.Departure;
@@ -21,13 +18,7 @@ import org.matsim.pt.transitSchedule.api.TransitRouteStop;
 import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt.transitSchedule.api.TransitScheduleFactory;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
-import org.matsim.pt2matsim.hafas.HafasConverter;
 import org.matsim.pt2matsim.hafas.HafasDefaults;
-import org.matsim.pt2matsim.hafas.lib.BitfeldAnalyzer;
-import org.matsim.pt2matsim.hafas.lib.FPLANReader;
-import org.matsim.pt2matsim.hafas.lib.FPLANRoute;
-import org.matsim.pt2matsim.hafas.lib.OperatorReader;
-import org.matsim.pt2matsim.hafas.lib.StopReader;
 import org.matsim.pt2matsim.tools.debug.ScheduleCleaner;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vehicles.VehicleCapacity;
@@ -42,21 +33,21 @@ import com.opencsv.CSVReader;
  * and outputs an unmapped MATSim schedule.
  */
 
-public class ScheduleFromCSVConverter {
+public class ScheduleFromCsvConverter {
 	
 	private TransitSchedule schedule = null;
 	private CoordinateTransformation transformation = null; 
 	private Vehicles vehicles = null;
 	private TransitScheduleFactory scheduleBuilder;
 	
-	public ScheduleFromCSVConverter(TransitSchedule schedule, Vehicles vehicles, CoordinateTransformation transformation) {
+	public ScheduleFromCsvConverter(TransitSchedule schedule, Vehicles vehicles, CoordinateTransformation transformation) {
 		this.schedule = schedule;
 		this.vehicles = vehicles;
 		this.transformation = transformation;
 		this.scheduleBuilder = this.schedule.getFactory();
 	}
 	
-	protected static Logger log = Logger.getLogger(ScheduleFromCSVConverter.class);
+	protected static Logger log = Logger.getLogger(ScheduleFromCsvConverter.class);
 
 	public void run(String linesCSV, String stopsCSV, String vehiclesCSV) throws IOException {
 		log.info("Creating the schedule based on CSV tables...");
@@ -116,6 +107,7 @@ public class ScheduleFromCSVConverter {
 		stopFacilities.get(stopId);
 	}
 
+	@SuppressWarnings("deprecation")
 	private void vehiclesTypesReader(String vehiclesCSV) {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
 		CSVReader reader = null;
@@ -239,10 +231,16 @@ public class ScheduleFromCSVConverter {
 					transitRoute.setTransportMode(transportMode);
 					transitLine.addRoute(transitRoute);
             	}
+            	
 			}
             reader.close();
         } catch (IOException e) {
             e.printStackTrace();
-        }
+        } finally {
+        	if (reader != null) {
+	        	try { reader.close(); } 
+	        	catch (IOException e) { e.printStackTrace(); } 
+	        }
+		}
 	}
 }
