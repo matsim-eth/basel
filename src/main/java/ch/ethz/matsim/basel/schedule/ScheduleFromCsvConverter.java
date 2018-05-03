@@ -193,7 +193,7 @@ public class ScheduleFromCsvConverter {
             					stopTime = Integer.parseInt(newLine[i].split("h")[0])*3600 + Integer.parseInt(newLine[i].split("h")[1])*60;
 							} catch (Exception e) {
 								if (e instanceof IndexOutOfBoundsException) {
-									stopTime = Integer.parseInt(newLine[i])*3600;
+									stopTime = Integer.parseInt(newLine[i].split("h")[0])*3600;
 								} else {
 									throw e;
 								}
