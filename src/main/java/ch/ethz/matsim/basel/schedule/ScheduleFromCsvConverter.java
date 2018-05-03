@@ -78,7 +78,7 @@ public class ScheduleFromCsvConverter {
 	public void stopReader(String stopsCSV) {
 		CSVReader reader = null;
 		try {
-            reader = new CSVReader(new FileReader(stopsCSV));
+            reader = new CSVReader(new FileReader(stopsCSV), ';');
             reader.readNext(); // skip header
             String[] newLine;
             while ((newLine = reader.readNext()) != null) {
@@ -108,7 +108,7 @@ public class ScheduleFromCsvConverter {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
 		CSVReader reader = null;
 		try {
-            reader = new CSVReader(new FileReader(vehiclesCSV));
+            reader = new CSVReader(new FileReader(vehiclesCSV), ';');
             reader.readNext(); // skip header
             String[] newLine;
             while ((newLine = reader.readNext()) != null) {
@@ -149,7 +149,7 @@ public class ScheduleFromCsvConverter {
 		String vehicleTypeId = null;
 		int routeCount = 0;
 		try {
-            reader = new CSVReader(new FileReader(linesCSV));
+            reader = new CSVReader(new FileReader(linesCSV), ';');
             String[] newLine;
             while ((newLine = reader.readNext()) != null) {
             	if (newLine[0].length() >= 4 && newLine[0].substring(0, 4).equals("Line")){
