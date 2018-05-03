@@ -4,7 +4,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
@@ -76,7 +75,7 @@ public class ScheduleFromCsvConverter {
 		log.info("Creating the schedule based on CSV tables... done.");
 	}
 
-	private void stopReader(String stopsCSV) {
+	public void stopReader(String stopsCSV) {
 		CSVReader reader = null;
 		try {
             reader = new CSVReader(new FileReader(stopsCSV));
@@ -102,13 +101,10 @@ public class ScheduleFromCsvConverter {
 		TransitStopFacility stopFacility = this.scheduleBuilder.createTransitStopFacility(stopId, coord, false);
 		stopFacility.setName(stopName);
 		this.schedule.addStopFacility(stopFacility);
-		Map<Id<TransitStopFacility>, TransitStopFacility> stopFacilities = this.schedule.getFacilities();
-		stopFacilities.values();
-		stopFacilities.get(stopId);
 	}
 
 	@SuppressWarnings("deprecation")
-	private void vehiclesTypesReader(String vehiclesCSV) {
+	public void vehiclesTypesReader(String vehiclesCSV) {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
 		CSVReader reader = null;
 		try {
@@ -140,8 +136,7 @@ public class ScheduleFromCsvConverter {
         }
 	}
 
-	private void createTransitLinesFromCSV(String linesCSV) {
-		TransitScheduleFactory scheduleFactory = schedule.getFactory();
+	public void createTransitLinesFromCSV(String linesCSV) {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
 
 		Counter lineCounter = new Counter(" TransitLine # ");
@@ -163,7 +158,7 @@ public class ScheduleFromCsvConverter {
             		lineId = Id.create(newLine[0], TransitLine.class);
             		
 					if(!schedule.getTransitLines().containsKey(lineId)) {
-						transitLine = scheduleFactory.createTransitLine(lineId);
+						transitLine = this.scheduleBuilder.createTransitLine(lineId);
 						schedule.addTransitLine(transitLine);
 						lineCounter.incCounter();
 					} else {
@@ -174,7 +169,10 @@ public class ScheduleFromCsvConverter {
 					newLine = reader.readNext();
 					vehicleTypeId = newLine[0];
 					transportMode = HafasDefaults.Vehicles.valueOf(vehicleTypeId).transportMode.modeName;
-					
+					if (!vehicles.getVehicleTypes().containsKey(Id.create(vehicleTypeId, VehicleType.class))) {
+						vehicles.addVehicleType(createDefaultVehicleType(HafasDefaults.Vehicles.valueOf(vehicleTypeId)));
+					}
+
 					// move to stop IDs line
 					newLine = reader.readNext();
 					stopIds = newLine;
@@ -206,32 +204,33 @@ public class ScheduleFromCsvConverter {
             				currentStopDepartureTime = (double) stopTime;
            					Double arrivalDelay = currentStopDepartureTime - firstStopDepartureTime;
             				TransitStopFacility stopFacility = schedule.getFacilities().get(Id.create(stopIds[i], TransitStopFacility.class));
-            				TransitRouteStop routeStop = scheduleFactory.createTransitRouteStop(stopFacility, arrivalDelay, arrivalDelay + 30.0);
-            				routeStop.setAwaitDepartureTime(true); // Only *T-Lines (currently not implemented) would have this as false...
+            				TransitRouteStop routeStop = this.scheduleBuilder.createTransitRouteStop(stopFacility, arrivalDelay, arrivalDelay + 30.0);
+            				routeStop.setAwaitDepartureTime(true); 
             				transitRouteStops.add(routeStop);
             			}
             		}
 
             		// create actual TransitRoute 
 					Id<TransitRoute> routeId = Id.create(lineId.toString()+"_"+routeCount, TransitRoute.class);
-					TransitRoute transitRoute = scheduleFactory.createTransitRoute(routeId, null, transitRouteStops, transportMode);
+					TransitRoute transitRoute = this.scheduleBuilder.createTransitRoute(routeId, null, transitRouteStops, transportMode);
 					// Departure Id
 					Id<Departure> departureId = Id.create(routeCount, Departure.class);
 					// Departure vehicle
 					Id<Vehicle> vehicleId = Id.create(vehicleTypeId + "_" + routeId.toString(), Vehicle.class);
-					// create and add departure
-					Departure departure = scheduleFactory.createDeparture(departureId, firstStopDepartureTime);
+					// create and add departure (each route has only one departure, i.e. each departure is a separate route. (this must be later handled by the ScheduleCleaner).
+					Departure departure = this.scheduleBuilder.createDeparture(departureId, firstStopDepartureTime);
 					departure.setVehicleId(vehicleId);
 					transitRoute.addDeparture(departure);
 					try {
-						vehicles.addVehicle(vehicleFactory.createVehicle(departure.getVehicleId(), vehicles.getVehicleTypes().get(Id.create(vehicleTypeId, VehicleType.class))));
+						vehicles.addVehicle(vehicleFactory.createVehicle(
+										departure.getVehicleId(), 
+										vehicles.getVehicleTypes().get(Id.create(vehicleTypeId, VehicleType.class))));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
 					transitRoute.setTransportMode(transportMode);
 					transitLine.addRoute(transitRoute);
             	}
-            	
 			}
             reader.close();
         } catch (IOException e) {
@@ -242,5 +241,26 @@ public class ScheduleFromCsvConverter {
 	        	catch (IOException e) { e.printStackTrace(); } 
 	        }
 		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private VehicleType createDefaultVehicleType(org.matsim.pt2matsim.hafas.HafasDefaults.Vehicles hafasVehicle) {
+		VehiclesFactory vehicleFactory = vehicles.getFactory();
+		VehicleType vehicleType = vehicleFactory.createVehicleType(Id.create(hafasVehicle.name, VehicleType.class));
+
+		// using default values for vehicle type
+		vehicleType.setLength(hafasVehicle.length);
+		vehicleType.setWidth(hafasVehicle.width);
+		vehicleType.setAccessTime(hafasVehicle.accessTime);
+		vehicleType.setEgressTime(hafasVehicle.egressTime);
+		vehicleType.setDoorOperationMode(hafasVehicle.doorOperation);
+		vehicleType.setPcuEquivalents(hafasVehicle.pcuEquivalents);
+
+		VehicleCapacity vehicleCapacity = vehicleFactory.createVehicleCapacity();
+		vehicleCapacity.setSeats(hafasVehicle.capacitySeats);
+		vehicleCapacity.setStandingRoom(hafasVehicle.capacityStanding);
+		vehicleType.setCapacity(vehicleCapacity);
+
+		return vehicleType;
 	}
 }
