@@ -5,10 +5,7 @@ import java.io.IOException;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
 import org.matsim.core.utils.geometry.transformations.TransformationFactory;
-import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt2matsim.tools.ScheduleTools;
-import org.matsim.vehicles.VehicleUtils;
-import org.matsim.vehicles.Vehicles;
 
 public class CsvTables2TransitSchedule {
 	
@@ -41,16 +38,15 @@ public class CsvTables2TransitSchedule {
 	 */
 	public static void run(String linesCSV, String stopsCSV, String vehiclesCSV, String outputCoordinateSystem, 
 			String outputScheduleFile, String outputVehicleFile) throws IOException {
-		TransitSchedule schedule = ScheduleTools.createSchedule();
-		Vehicles vehicles = VehicleUtils.createVehiclesContainer();
+
 		CoordinateTransformation transformation = !outputCoordinateSystem.equals("null") ?
 				TransformationFactory.getCoordinateTransformation("WGS84", outputCoordinateSystem) : new IdentityTransformation();
 
-		ScheduleFromCsvConverter converter = new ScheduleFromCsvConverter(schedule, vehicles, transformation);
-		converter.run(linesCSV, stopsCSV, vehiclesCSV);
+		ScheduleFromCsvConverter converter = new ScheduleFromCsvConverter(transformation);
+		converter.run(linesCSV, stopsCSV);
 		
-		ScheduleTools.writeTransitSchedule(schedule, outputScheduleFile);
-		ScheduleTools.writeVehicles(vehicles, outputVehicleFile);
+		ScheduleTools.writeTransitSchedule(converter.getSchedule(), outputScheduleFile);
+		ScheduleTools.writeVehicles(converter.getVehicles(), outputVehicleFile);
 	}
 
 }
