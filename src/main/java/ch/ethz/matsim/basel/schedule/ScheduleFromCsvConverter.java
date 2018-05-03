@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
+import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
 import org.matsim.core.utils.misc.Counter;
 import org.matsim.pt.transitSchedule.api.Departure;
 import org.matsim.pt.transitSchedule.api.TransitLine;
@@ -18,10 +19,12 @@ import org.matsim.pt.transitSchedule.api.TransitSchedule;
 import org.matsim.pt.transitSchedule.api.TransitScheduleFactory;
 import org.matsim.pt.transitSchedule.api.TransitStopFacility;
 import org.matsim.pt2matsim.hafas.HafasDefaults;
+import org.matsim.pt2matsim.tools.ScheduleTools;
 import org.matsim.pt2matsim.tools.debug.ScheduleCleaner;
 import org.matsim.vehicles.Vehicle;
 import org.matsim.vehicles.VehicleCapacity;
 import org.matsim.vehicles.VehicleType;
+import org.matsim.vehicles.VehicleUtils;
 import org.matsim.vehicles.Vehicles;
 import org.matsim.vehicles.VehiclesFactory;
 
@@ -34,45 +37,54 @@ import com.opencsv.CSVReader;
 
 public class ScheduleFromCsvConverter {
 	
-	private TransitSchedule schedule = null;
+	private TransitSchedule schedule = ScheduleTools.createSchedule();
+	private Vehicles vehicles = VehicleUtils.createVehiclesContainer();
 	private CoordinateTransformation transformation = null; 
-	private Vehicles vehicles = null;
-	private TransitScheduleFactory scheduleBuilder;
+	private TransitScheduleFactory scheduleBuilder = this.schedule.getFactory();
 	
-	public ScheduleFromCsvConverter(TransitSchedule schedule, Vehicles vehicles, CoordinateTransformation transformation) {
-		this.schedule = schedule;
-		this.vehicles = vehicles;
+	public ScheduleFromCsvConverter(CoordinateTransformation transformation) {
 		this.transformation = transformation;
-		this.scheduleBuilder = this.schedule.getFactory();
+	}
+	
+	public ScheduleFromCsvConverter() {
+		this(new IdentityTransformation());
 	}
 	
 	protected static Logger log = Logger.getLogger(ScheduleFromCsvConverter.class);
 
-	public void run(String linesCSV, String stopsCSV, String vehiclesCSV) throws IOException {
+	public void run(String linesCsv, String stopsCsv) throws IOException {
 		log.info("Creating the schedule based on CSV tables...");
 
 		// 1. Read and create stop facilities
 		log.info("  Read transit stops...");
-		stopReader(stopsCSV);
+		stopReader(stopsCsv);
 		log.info("  Read transit stops... done.");
 
-		// 2. Read and create vehicle types
-		log.info("  Read vehicle types...");
-		vehiclesTypesReader(vehiclesCSV);
-		log.info("  Read vehicle types... done.");
-
+//		// 2. Read and create vehicle types
+//		log.info("  Read vehicle types...");
+//		vehiclesTypesReader(vehiclesCSV);
+//		log.info("  Read vehicle types... done.");
+//
 		// 3. Create all lines from CSV lines table
 		log.info("  Creating transit routes...");
-		createTransitLinesFromCSV(linesCSV);
+		createTransitLinesFromCsv(linesCsv);
 		log.info("  Creating transit routes... done.");
 
 		// 4. Clean schedule
 		ScheduleCleaner.removeNotUsedStopFacilities(schedule);
-		ScheduleCleaner.combineIdenticalTransitRoutes(schedule);
+//		ScheduleCleaner.combineIdenticalTransitRoutes(schedule);
 		ScheduleCleaner.cleanDepartures(schedule);
 		ScheduleCleaner.cleanVehicles(schedule, vehicles);
 
 		log.info("Creating the schedule based on CSV tables... done.");
+	}
+	
+	public TransitSchedule getSchedule() {
+		return this.schedule;
+	}
+
+	public Vehicles getVehicles() {
+		return this.vehicles;
 	}
 
 	public void stopReader(String stopsCSV) {
@@ -136,7 +148,7 @@ public class ScheduleFromCsvConverter {
         }
 	}
 
-	public void createTransitLinesFromCSV(String linesCSV) {
+	public void createTransitLinesFromCsv(String linesCsv) {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
 
 		Counter lineCounter = new Counter(" TransitLine # ");
@@ -149,7 +161,7 @@ public class ScheduleFromCsvConverter {
 		String vehicleTypeId = null;
 		int routeCount = 0;
 		try {
-            reader = new CSVReader(new FileReader(linesCSV), ';');
+            reader = new CSVReader(new FileReader(linesCsv), ';');
             String[] newLine;
             while ((newLine = reader.readNext()) != null) {
             	if (newLine[0].length() >= 4 && newLine[0].substring(0, 4).equals("Line")){
