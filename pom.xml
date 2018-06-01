@@ -4,9 +4,9 @@
 		 xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
   
-  <groupId>ch.ethz.matsim</groupId>
-  <artifactId>Basel</artifactId>
-  <version>0.0.1-SNAPSHOT</version>
+  <groupId>com.github.matsim-eth</groupId>
+  <artifactId>basel</artifactId>
+  <version>master-SNAPSHOT</version>
   <name>Basel</name>
   <description>Greater Basel MATSim scenario.</description>
   
@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>org.matsim</groupId>
 			<artifactId>pt2matsim</artifactId>
-			<version>18.2</version>
+			<version>18.5</version>
 		</dependency>
 		
 		<!-- https://mvnrepository.com/artifact/org.openstreetmap.osmosis/osmosis-xml -->
