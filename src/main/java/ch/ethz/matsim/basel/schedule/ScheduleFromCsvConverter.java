@@ -3,7 +3,9 @@ package ch.ethz.matsim.basel.schedule;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
@@ -71,6 +73,7 @@ public class ScheduleFromCsvConverter {
 		log.info("  Creating transit routes... done.");
 
 		// 4. Clean schedule
+		removeRoutesWithOnlyOneStop(schedule);
 		ScheduleCleaner.removeNotUsedStopFacilities(schedule);
 //		ScheduleCleaner.combineIdenticalTransitRoutes(schedule);
 		ScheduleCleaner.cleanDepartures(schedule);
@@ -200,6 +203,7 @@ public class ScheduleFromCsvConverter {
             		Double currentStopDepartureTime = null;
             		int stopTime = 0;
             		for (int i = 0; i<stopSequence.length; i++){
+            			double previousArrivalDelay = 0.0;
             			if (!stopSequence[i].equals("-") && !stopSequence[i].equals("")){
             				try {
             					stopTime = Integer.parseInt(newLine[i].split("h")[0])*3600 + Integer.parseInt(newLine[i].split("h")[1])*60;
@@ -214,11 +218,18 @@ public class ScheduleFromCsvConverter {
             					firstStopDepartureTime = (double) stopTime;
             				} 
             				currentStopDepartureTime = (double) stopTime;
-           					Double arrivalDelay = currentStopDepartureTime - firstStopDepartureTime;
-            				TransitStopFacility stopFacility = schedule.getFacilities().get(Id.create(stopIds[i], TransitStopFacility.class));
-            				TransitRouteStop routeStop = this.scheduleBuilder.createTransitRouteStop(stopFacility, arrivalDelay, arrivalDelay + 30.0);
-            				routeStop.setAwaitDepartureTime(true); 
-            				transitRouteStops.add(routeStop);
+           					double arrivalDelay = currentStopDepartureTime - firstStopDepartureTime;
+           					if (arrivalDelay < 0) { // skips stops that "go back in time", which are an inconsistency in data
+           						log.warn("Stop with negative arrivalDelay found. Skipping stop " + stopIds[i] + " of route " + lineId.toString()+"_"+routeCount);
+           					} else if (arrivalDelay < previousArrivalDelay) {
+           						log.warn("Stop with arrivalDelay smaller than previous stop found. Skipping stop " + stopIds[i] + " of route " + lineId.toString()+"_"+routeCount);
+           					} else {
+           						TransitStopFacility stopFacility = schedule.getFacilities().get(Id.create(stopIds[i], TransitStopFacility.class));
+                				TransitRouteStop routeStop = this.scheduleBuilder.createTransitRouteStop(stopFacility, arrivalDelay, arrivalDelay + 30.0);
+                				routeStop.setAwaitDepartureTime(true); 
+                				transitRouteStops.add(routeStop);
+           					}
+           					previousArrivalDelay = arrivalDelay;
             			}
             		}
 
@@ -252,6 +263,24 @@ public class ScheduleFromCsvConverter {
 	        	try { reader.close(); } 
 	        	catch (IOException e) { e.printStackTrace(); } 
 	        }
+		}
+	}
+
+	private void removeRoutesWithOnlyOneStop(TransitSchedule schedule) {
+		Set<TransitRoute> routesToRemove = new HashSet<>();
+		for (TransitLine line : schedule.getTransitLines().values()) {
+			for (TransitRoute route : line.getRoutes().values()) {
+				if (route.getStops().size() < 2) {
+					routesToRemove.add(route);
+				}
+			}
+		}
+		for (TransitRoute route : routesToRemove) {
+			for (TransitLine line : schedule.getTransitLines().values()) {
+				if (line.getRoutes().containsValue(route)) {
+					line.removeRoute(route);
+				}
+			}
 		}
 	}
 
