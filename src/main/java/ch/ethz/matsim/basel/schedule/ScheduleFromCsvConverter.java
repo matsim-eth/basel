@@ -98,13 +98,13 @@ public class ScheduleFromCsvConverter {
             String[] newLine;
             while ((newLine = reader.readNext()) != null) {
             	Id<TransitStopFacility> stopId = Id.create(newLine[0], TransitStopFacility.class);
-				double xCoord = Double.parseDouble(newLine[3]);
-				double yCoord = Double.parseDouble(newLine[4]);
+				double xCoord = Double.parseDouble(newLine[2]);
+				double yCoord = Double.parseDouble(newLine[3]);
 				Coord coord = new Coord(xCoord, yCoord);
 				if (this.transformation != null) {
 					coord = this.transformation.transform(coord);
 				}
-				String stopName = newLine[2];
+				String stopName = newLine[1];
 				createStop(stopId, coord, stopName);
 			}
         } catch (IOException e) {
