@@ -3,13 +3,17 @@ package ch.ethz.matsim.basel.schedule;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.matsim.api.core.v01.Coord;
 import org.matsim.api.core.v01.Id;
+import org.matsim.core.utils.collections.MapUtils;
 import org.matsim.core.utils.geometry.CoordinateTransformation;
 import org.matsim.core.utils.geometry.transformations.IdentityTransformation;
 import org.matsim.core.utils.misc.Counter;
@@ -75,7 +79,7 @@ public class ScheduleFromCsvConverter {
 		// 4. Clean schedule
 		removeRoutesWithOnlyOneStop(schedule);
 		ScheduleCleaner.removeNotUsedStopFacilities(schedule);
-//		ScheduleCleaner.combineIdenticalTransitRoutes(schedule);
+		combineIdenticalTransitRoutes(schedule);
 		ScheduleCleaner.cleanDepartures(schedule);
 		ScheduleCleaner.cleanVehicles(schedule, vehicles);
 
@@ -183,9 +187,15 @@ public class ScheduleFromCsvConverter {
 					// move to mode line
 					newLine = reader.readNext();
 					vehicleTypeId = newLine[0];
-					transportMode = VehicleTypeDefaults.Type.valueOf(vehicleTypeId).transportMode.name;
-					if (!vehicles.getVehicleTypes().containsKey(Id.create(vehicleTypeId, VehicleType.class))) {
-						vehicles.addVehicleType(createDefaultVehicleType(VehicleTypeDefaults.Type.valueOf(vehicleTypeId)));
+					VehicleTypeDefaults.Type modeType = null;
+					try {
+						modeType = VehicleTypeDefaults.Type.valueOf(vehicleTypeId);
+					} catch (IllegalArgumentException e) {
+						modeType = VehicleTypeDefaults.Type.OTHER;
+					}
+					transportMode = modeType.transportMode.name;
+					if (!vehicles.getVehicleTypes().containsKey(Id.create(transportMode, VehicleType.class))) {
+						vehicles.addVehicleType(createDefaultVehicleType(modeType));
 					}
 
 					// move to stop IDs line
@@ -247,7 +257,7 @@ public class ScheduleFromCsvConverter {
 					try {
 						vehicles.addVehicle(vehicleFactory.createVehicle(
 										departure.getVehicleId(), 
-										vehicles.getVehicleTypes().get(Id.create(vehicleTypeId, VehicleType.class))));
+										vehicles.getVehicleTypes().get(Id.create(transportMode, VehicleType.class))));
 					} catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -287,7 +297,7 @@ public class ScheduleFromCsvConverter {
 	@SuppressWarnings("deprecation")
 	private VehicleType createDefaultVehicleType(VehicleTypeDefaults.Type defaultVehicle) {
 		VehiclesFactory vehicleFactory = vehicles.getFactory();
-		VehicleType vehicleType = vehicleFactory.createVehicleType(Id.create(defaultVehicle.name, VehicleType.class));
+		VehicleType vehicleType = vehicleFactory.createVehicleType(Id.create(defaultVehicle.transportMode.name, VehicleType.class));
 
 		// using default values for vehicle type
 		vehicleType.setLength(defaultVehicle.length);
@@ -303,5 +313,36 @@ public class ScheduleFromCsvConverter {
 		vehicleType.setCapacity(vehicleCapacity);
 
 		return vehicleType;
+	}
+	
+	public static void combineIdenticalTransitRoutes(TransitSchedule schedule) {
+		log.info("Combining TransitRoutes with identical stop sequence...");
+		int combined = 0;
+		for(TransitLine transitLine : schedule.getTransitLines().values()) {
+			Map<List<String>, List<TransitRoute>> profiles = new HashMap<>();
+			for(TransitRoute transitRoute : transitLine.getRoutes().values()) {
+				List<String> stopFacilityOrderWithArrivalTime = new LinkedList<>();
+				for(TransitRouteStop routeStop : transitRoute.getStops()) {
+					stopFacilityOrderWithArrivalTime.add(routeStop.getStopFacility().getId().toString() + 
+							" - " + Double.toString(routeStop.getArrivalOffset()));
+				}
+				MapUtils.getList(stopFacilityOrderWithArrivalTime, profiles).add(transitRoute);
+			}
+
+			for(List<TransitRoute> routeList : profiles.values()) {
+				if(routeList.size() > 1) {
+					TransitRoute finalRoute = routeList.get(0);
+					for(int i = 1; i < routeList.size(); i++) {
+
+						combined++;
+						transitLine.removeRoute(routeList.get(i));
+						for(Departure departure : routeList.get(i).getDepartures().values()) {
+							finalRoute.addDeparture(departure);
+						}
+					}
+				}
+			}
+		}
+		log.info("... Combined " + combined + " transit routes");
 	}
 }
