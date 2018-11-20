@@ -13,18 +13,18 @@ public class CsvTables2TransitSchedule {
 	}
 
 	public static void main(String[] args) throws IOException {
-		if(args.length == 4) {
-			run(args[0], args[1], args[2], args[3], args[4], args[5]);
+		if(args.length == 5) {
+			run(args[0], args[1], args[2], args[3], args[4]);
 		} else {
 			try {
 				String path = "resources/schedule/";
 				String linesCSV = "input/lines_list2016.csv";
 				String stopsCSV = "input/stops_list2016.csv"; 
-				String vehiclesCSV = "input/VehicleData.csv";
+//				String vehiclesCSV = "input/VehicleData.csv";
 				String outputCoordinateSystem = "null"; // set to null if no conversion is needed
 				String outputScheduleFile = "output/Unmapped_Basel_IVT_Schedule.xml"; 
 				String outputVehicleFile = "output/Unmapped_Basel_IVT_Vehicles.xml";
-				run(path+linesCSV, path+stopsCSV, path+vehiclesCSV, outputCoordinateSystem, path+outputScheduleFile, path+outputVehicleFile);
+				run(path+linesCSV, path+stopsCSV, outputCoordinateSystem, path+outputScheduleFile, path+outputVehicleFile);
 			} catch (Exception e) {
 				e.printStackTrace();
 				throw new IllegalArgumentException("Wrong number of arguments or default files not found.");
@@ -36,7 +36,7 @@ public class CsvTables2TransitSchedule {
 	 * Converts all input files in and writes the output schedule and vehicles to the respective
 	 * files. 
 	 */
-	public static void run(String linesCSV, String stopsCSV, String vehiclesCSV, String outputCoordinateSystem, 
+	public static void run(String linesCSV, String stopsCSV, String outputCoordinateSystem, 
 			String outputScheduleFile, String outputVehicleFile) throws IOException {
 
 		CoordinateTransformation transformation = !outputCoordinateSystem.equals("null") ?
